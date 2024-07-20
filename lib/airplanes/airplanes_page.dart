@@ -11,12 +11,22 @@ class AirplanesPage extends StatelessWidget {
       Navigator.pop(context);
     }
 
+    void navigateToAddAirplanePage() {
+      Navigator.pushNamed(context, "/addAirplanePage");
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Airplanes page"),
       ),
       body: Center(
-          child: Text('Airplanes fly')
+          child: Column(
+            children: [
+              ElevatedButton(
+                  onPressed: navigateToAddAirplanePage,
+                  child: Text("Add new airplane"))
+            ],
+          )
 
           ),
     );

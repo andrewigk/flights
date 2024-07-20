@@ -1,3 +1,4 @@
+import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
@@ -13,17 +14,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'App title',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
       initialRoute: '/',
       routes: {
-    '/airplanespage': (context) => AirplanesPage(),
+        '/airplanesPage': (context) => AirplanesPage(),
+        '/addAirplanePage': (context) => AddAirplanePage(),
+
+        // ^^^^^^you guys can add your routes to pages here
     },
 
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'CST2335 Project'),
     );
   }
 }
@@ -38,17 +42,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   void navigateToAirplanesPage() {
-      Navigator.pushNamed(context, "/airplanespage");
+      Navigator.pushNamed(context, "/airplanesPage");
   }
+
+  // you can implment these methods with your route name like i did ^^^
+  // all the buttons are already hooked up to these functions
+  //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
+
+  void navigateToCustomersListPage() {}
+
+  void navigateToFlightsListPage() {}
+
+  void navigateToReservations() {}
 
 
   @override
@@ -63,10 +70,20 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
+                    onPressed: navigateToCustomersListPage,
+                    child: Text("Customers list page") ),
+                ElevatedButton(
                     onPressed: navigateToAirplanesPage,
-                    child: Text("Airplane page") )
+                    child: Text("Airplanes page") ),
+                ElevatedButton(
+                    onPressed: navigateToFlightsListPage,
+                    child: Text("Flights list page") ),
+                ElevatedButton(
+                    onPressed: navigateToReservations,
+                    child: Text("Reservations page") ),
               ],
           )
         ],
