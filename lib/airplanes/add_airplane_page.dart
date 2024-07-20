@@ -13,7 +13,7 @@ class AddAirplanePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Airplanes page"),
+        title: Text("Add airplane"),
       ),
       body: Center(
           child: Text('Airplanes fly')
