@@ -7,10 +7,6 @@ class AirplanesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    void navigateHome() {
-      Navigator.pop(context);
-    }
-
     void navigateToAddAirplanePage() {
       Navigator.pushNamed(context, "/addAirplanePage");
     }
