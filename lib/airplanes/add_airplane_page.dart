@@ -1,3 +1,5 @@
+import 'package:cst2335_final_project/airplanes/airplane.dart';
+import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
 import 'package:flutter/material.dart';
 
 class AddAirplanePage extends StatefulWidget {
@@ -14,6 +16,8 @@ class AddAirplanePageState extends State<AddAirplanePage> {
   // max speed
   // range in KM
   // VALIDATE ALL
+
+  late AirplaneDao airplaneDao;
 
   late TextEditingController airplaneTypeController;
   late TextEditingController numberOfPassengersController;
@@ -45,8 +49,56 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     String maxSpeedUserInput = maxSpeedController.value.text;
     String rangeUserInput = rangeController.value.text;
 
+    if (airplaneTypeUserInput == "") {
+      return false;
+    }
 
-    return true; // TODO CHECK IF INPUTS ARE EMPTY
+    if (numberOfPassengerUserInput == "") {
+      return false;
+    }
+
+    if (maxSpeedUserInput == "") {
+      return false;
+    }
+
+    if (rangeUserInput == "") {
+      return false;
+    }
+
+    return true;
+  }
+
+  void closeAlertDialog() {
+    Navigator.pop(context);
+  }
+
+  void clearUserInputs(){
+    setState(() {
+      airplaneTypeController.clear();
+      numberOfPassengersController.clear();
+      maxSpeedController.clear();
+      rangeController.clear();
+    });
+  }
+
+  Future<void> addAirplaneToDatabase(Airplane airplane) async {
+    await airplaneDao.insertAirplane(airplane);
+  }
+
+  void alertUserOfSuccessfulInsert(){
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Database updated"),
+          content: const Text("Airplane was added to database successfully."),
+          actions: <Widget>[
+            ElevatedButton(
+                onPressed: closeAlertDialog,
+                child: Text("Ok"),
+            )
+          ],
+        )
+    );
   }
 
   void createNewAirplane(){
@@ -56,12 +108,35 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     String maxSpeedUserInput = maxSpeedController.value.text;
     String rangeUserInput = rangeController.value.text;
 
-    if (!validateUserInputs()) {
+    if (!validateUserInputs()) { // Alert user of invalid empty inputs
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Invalid input"),
+            content: const Text("At least one of your inputs was left empty."),
+            actions: <Widget>[
+              ElevatedButton(
+                  onPressed: closeAlertDialog,
+                  child: Text("Ok")
+              )
+            ],
+          )
+      );
 
+    } else {
+      // create an airplane with user inputs
+      Airplane airplane = Airplane(
+          airplaneType: airplaneTypeUserInput,
+          numberOfPassengers: int.parse(numberOfPassengerUserInput),
+          maxSpeed: int.parse(maxSpeedUserInput),
+          range: int.parse(rangeUserInput)
+      );
+
+      // add airplane to database
+      addAirplaneToDatabase(airplane);
+      clearUserInputs();
+      alertUserOfSuccessfulInsert();
     }
-    // TODO SQL
-
-
   }
 
   @override
@@ -104,7 +179,10 @@ class AddAirplanePageState extends State<AddAirplanePage> {
               ),
               ElevatedButton(
                   onPressed: createNewAirplane,
-                  child: Text("Add new airplane to database"))
+                  child: Text("Add new airplane to database")),
+              ElevatedButton(
+                  onPressed: clearUserInputs,
+                  child: Text("Clear form")),
             ],
           )
       ),
