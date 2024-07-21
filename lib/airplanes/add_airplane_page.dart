@@ -38,6 +38,16 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     rangeController.dispose();
   }
 
+  void createNewAirplane(){
+
+    String airplaneTypeUserInput = airplaneTypeController.value.text;
+    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
+    String maxSpeedUserInput = maxSpeedController.value.text;
+    String rangeUserInput = rangeController.value.text;
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +86,9 @@ class AddAirplanePageState extends State<AddAirplanePage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              ElevatedButton(
+                  onPressed: createNewAirplane,
+                  child: Text("Add new airplane to database"))
             ],
           )
       ),
