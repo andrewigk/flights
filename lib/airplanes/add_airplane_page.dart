@@ -38,12 +38,28 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     rangeController.dispose();
   }
 
+  bool validateUserInputs() {
+
+    String airplaneTypeUserInput = airplaneTypeController.value.text;
+    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
+    String maxSpeedUserInput = maxSpeedController.value.text;
+    String rangeUserInput = rangeController.value.text;
+
+
+    return true; // TODO CHECK IF INPUTS ARE EMPTY
+  }
+
   void createNewAirplane(){
 
     String airplaneTypeUserInput = airplaneTypeController.value.text;
     String numberOfPassengerUserInput = numberOfPassengersController.value.text;
     String maxSpeedUserInput = maxSpeedController.value.text;
     String rangeUserInput = rangeController.value.text;
+
+    if (!validateUserInputs()) {
+
+    }
+
 
 
   }
