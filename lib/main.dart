@@ -1,9 +1,10 @@
 import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
 import 'package:flutter/material.dart';
-import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
+
 
 void main() {
+  // TODO: Initialize database and DAOs here
   runApp(const MyApp());
 }
 
