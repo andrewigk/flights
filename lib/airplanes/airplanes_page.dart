@@ -7,10 +7,6 @@ class AirplanesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    void navigateHome() {
-      Navigator.pop(context);
-    }
-
     void navigateToAddAirplanePage() {
       Navigator.pushNamed(context, "/addAirplanePage");
     }
@@ -21,7 +17,8 @@ class AirplanesPage extends StatelessWidget {
       ),
       body: Center(
           child: Column(
-            children: [
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
               ElevatedButton(
                   onPressed: navigateToAddAirplanePage,
                   child: Text("Add new airplane"))
