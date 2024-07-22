@@ -6,15 +6,6 @@ import '../database.dart';
 import 'airplane.dart';
 import 'airplane_dao.dart';
 
-/*
-* CRITERIA FOR AIRPLANES PAGE:
-* - Listview displaying all planes
-* - button to add plane -> add new plane form (submit/insert new plane button)
-*     -> adding plane has shared preferences, displaying previously entered plane details
-* - click on plane -> details form (with update, delete buttons)
-*   -> populate form with current airplane details
-* */
-
 class AirplaneDetailsPage extends StatefulWidget {
   final ApplicationDatabase database;
 
