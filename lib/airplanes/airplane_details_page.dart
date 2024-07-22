@@ -26,9 +26,9 @@ class AirplaneDetailsPage extends StatefulWidget {
 
 class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
-  AirplaneDetailsPageState({required airplaneDao});
+  AirplaneDetailsPageState({required this.airplaneDao});
 
-  late AirplaneDao airplaneDao;
+  final AirplaneDao airplaneDao;
   final originalAirplane = AirplaneRepository.selectedAirplane;
 
   late TextEditingController airplaneTypeController;
@@ -44,6 +44,7 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
     loadOriginalAirplaneDetails();
+
   }
 
   @override
@@ -154,6 +155,7 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
     } else {
       // create an airplane with user inputs
       Airplane airplane = Airplane(
+        airplaneId: originalAirplane?.airplaneId,
           airplaneType: airplaneTypeUserInput,
           numberOfPassengers: int.parse(numberOfPassengerUserInput),
           maxSpeed: int.parse(maxSpeedUserInput),
@@ -168,45 +170,11 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
   }
 
   void deleteAirplane() {
-
-    String airplaneTypeUserInput = airplaneTypeController.value.text;
-    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
-    String maxSpeedUserInput = maxSpeedController.value.text;
-    String rangeUserInput = rangeController.value.text;
-
-    if (!validateUserInputs()) { // Alert user of invalid empty inputs
-      showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-            title: const Text("Invalid input"),
-            content: const Text("At least one of your inputs was left empty."),
-            actions: <Widget>[
-              ElevatedButton(
-                  onPressed: closeAlertDialog,
-                  child: Text("Ok")
-              )
-            ],
-          )
-      );
-
-    } else {
-      // create an airplane with user inputs
-      Airplane airplane = Airplane(
-          airplaneType: airplaneTypeUserInput,
-          numberOfPassengers: int.parse(numberOfPassengerUserInput),
-          maxSpeed: int.parse(maxSpeedUserInput),
-          range: int.parse(rangeUserInput)
-      );
-
       // add airplane to database
-      deleteAirplaneFromDatabase(airplane);
-      clearUserInputs();
-      alertUserOfSuccessfulInsert();
-    }
+    deleteAirplaneFromDatabase(originalAirplane!);
+    clearUserInputs();
+    alertUserOfSuccessfulInsert();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {

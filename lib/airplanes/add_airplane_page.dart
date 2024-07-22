@@ -37,7 +37,8 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
 
-    loadSharedPreferences();
+    // loadSharedPreferences();
+    // TODO FIX THIS^^^
   }
 
   @override
@@ -94,21 +95,13 @@ class AddAirplanePageState extends State<AddAirplanePage> {
 
   Future<void> loadSharedPreferences() async {
 
-    // TODO FIX THIS
-    setState(() {
+    prefs.getString("airplaneType").then((storedAirplaneType) {
       if (prefs.getString("airplaneType") != "") {
-        airplaneTypeController.value = prefs.getString("airplaneType") as TextEditingValue;
+        airplaneTypeController.text = storedAirplaneType;
+
       }
-      if (prefs.getString("numberOfPassengers") != "") {
-        numberOfPassengersController.value =(prefs.getString("numberOfPassengers")) as TextEditingValue;
-      }
-      if (prefs.getString("maxSpeed") != "") {
-        maxSpeedController.value = (prefs.getString("maxSpeed")) as TextEditingValue;
-      }
-      if (prefs.getString("range") != "") {
-        rangeController.value = (prefs.getString("range")) as TextEditingValue;
-      }
-    });
+    } );   // TODO FIX THIS
+
   }
 
 
