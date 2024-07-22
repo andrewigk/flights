@@ -1,28 +1,35 @@
-import 'package:cst2335_final_project/airplanes/airplane.dart';
-import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
-import 'package:cst2335_final_project/database.dart';
-import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
+import 'package:cst2335_final_project/airplanes/airplane_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Fix shared prefs
+import '../database.dart';
+import 'airplane.dart';
+import 'airplane_dao.dart';
 
-class AddAirplanePage extends StatefulWidget {
+/*
+* CRITERIA FOR AIRPLANES PAGE:
+* - Listview displaying all planes
+* - button to add plane -> add new plane form (submit/insert new plane button)
+*     -> adding plane has shared preferences, displaying previously entered plane details
+* - click on plane -> details form (with update, delete buttons)
+*   -> populate form with current airplane details
+* */
+
+class AirplaneDetailsPage extends StatefulWidget {
   final ApplicationDatabase database;
 
-
-  AddAirplanePage({required this.database}); // take the database from main
+  AirplaneDetailsPage({required this.database});
 
   @override
-  State<AddAirplanePage> createState() => AddAirplanePageState(airplaneDao: database.airplaneDao);
+  State<AirplaneDetailsPage> createState() => AirplaneDetailsPageState(airplaneDao: database.airplaneDao);
 }
 
-class AddAirplanePageState extends State<AddAirplanePage> {
+class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
-  AddAirplanePageState({required this.airplaneDao});
-
-  final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
+  AirplaneDetailsPageState({required airplaneDao});
 
   late AirplaneDao airplaneDao;
+  final originalAirplane = AirplaneRepository.selectedAirplane;
 
   late TextEditingController airplaneTypeController;
   late TextEditingController numberOfPassengersController;
@@ -36,8 +43,7 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     numberOfPassengersController = TextEditingController();
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
-
-    loadSharedPreferences();
+    loadOriginalAirplaneDetails();
   }
 
   @override
@@ -88,64 +94,42 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     });
   }
 
-  Future<void> addAirplaneToDatabase(Airplane airplane) async {
-    await airplaneDao.insertAirplane(airplane);
-  }
-
-  Future<void> loadSharedPreferences() async {
-
-    // TODO FIX THIS
+  void loadOriginalAirplaneDetails() {
     setState(() {
-      if (prefs.getString("airplaneType") != "") {
-        airplaneTypeController.value = prefs.getString("airplaneType") as TextEditingValue;
-      }
-      if (prefs.getString("numberOfPassengers") != "") {
-        numberOfPassengersController.value =(prefs.getString("numberOfPassengers")) as TextEditingValue;
-      }
-      if (prefs.getString("maxSpeed") != "") {
-        maxSpeedController.value = (prefs.getString("maxSpeed")) as TextEditingValue;
-      }
-      if (prefs.getString("range") != "") {
-        rangeController.value = (prefs.getString("range")) as TextEditingValue;
-      }
+      airplaneTypeController.text = originalAirplane!.airplaneType;
+      numberOfPassengersController.text = originalAirplane!.numberOfPassengers.toString();
+      maxSpeedController.text = originalAirplane!.maxSpeed.toString();
+      rangeController.text = originalAirplane!.range.toString();
     });
   }
 
-
-  void saveSharedPreferences() async {
-   await prefs.setString("airplaneType", airplaneTypeController.text);
-   await prefs.setString("numberOfPassengers", numberOfPassengersController.text);
-   await prefs.setString("maxSpeed", maxSpeedController.text);
-   await prefs.setString("range", rangeController.text);
+  Future<void> updateAirplaneToDatabase(Airplane airplane) async {
+    await airplaneDao.updateAirplane(airplane);
   }
 
-  void clearSharedPreferences() async {
-    setState(() async {
-      await prefs.remove("airplaneType");
-      await prefs.remove("numberOfPassengers");
-      await prefs.remove("maxSpeed");
-      await prefs.remove("range");
-    });
-
+  Future<void> deleteAirplaneFromDatabase(Airplane airplane) async {
+    await airplaneDao.deleteAirplane(airplane);
   }
+
+
 
   void alertUserOfSuccessfulInsert(){
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Database updated"),
-          content: const Text("Airplane was added to database successfully."),
+          content: const Text("Database was updated successfully."),
           actions: <Widget>[
             ElevatedButton(
-                onPressed: closeAlertDialog,
-                child: Text("Ok"),
+              onPressed: closeAlertDialog,
+              child: Text("Ok"),
             )
           ],
         )
     );
   }
 
-  void createNewAirplane(){
+  void updateAirplane() {
 
     String airplaneTypeUserInput = airplaneTypeController.value.text;
     String numberOfPassengerUserInput = numberOfPassengersController.value.text;
@@ -177,12 +161,52 @@ class AddAirplanePageState extends State<AddAirplanePage> {
       );
 
       // add airplane to database
-      addAirplaneToDatabase(airplane);
-      saveSharedPreferences();
+      updateAirplaneToDatabase(airplane);
       clearUserInputs();
       alertUserOfSuccessfulInsert();
     }
   }
+
+  void deleteAirplane() {
+
+    String airplaneTypeUserInput = airplaneTypeController.value.text;
+    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
+    String maxSpeedUserInput = maxSpeedController.value.text;
+    String rangeUserInput = rangeController.value.text;
+
+    if (!validateUserInputs()) { // Alert user of invalid empty inputs
+      showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text("Invalid input"),
+            content: const Text("At least one of your inputs was left empty."),
+            actions: <Widget>[
+              ElevatedButton(
+                  onPressed: closeAlertDialog,
+                  child: Text("Ok")
+              )
+            ],
+          )
+      );
+
+    } else {
+      // create an airplane with user inputs
+      Airplane airplane = Airplane(
+          airplaneType: airplaneTypeUserInput,
+          numberOfPassengers: int.parse(numberOfPassengerUserInput),
+          maxSpeed: int.parse(maxSpeedUserInput),
+          range: int.parse(rangeUserInput)
+      );
+
+      // add airplane to database
+      deleteAirplaneFromDatabase(airplane);
+      clearUserInputs();
+      alertUserOfSuccessfulInsert();
+    }
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -223,14 +247,14 @@ class AddAirplanePageState extends State<AddAirplanePage> {
                 ),
               ),
               ElevatedButton(
-                  onPressed: createNewAirplane,
-                  child: Text("Add new airplane to database")),
+                  onPressed: deleteAirplane,
+                  child: Text("Delete")),
+              ElevatedButton(
+                  onPressed: updateAirplane,
+                  child: Text("Update database")),
               ElevatedButton(
                   onPressed: clearUserInputs,
                   child: Text("Clear form")),
-              ElevatedButton(
-                  onPressed: clearSharedPreferences,
-                  child: Text("Clear preferences")),
             ],
           )
       ),

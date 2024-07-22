@@ -1,9 +1,12 @@
 import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
+import 'package:cst2335_final_project/airplanes/airplane_details_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'database.dart';
 
 void main() async { // DO NOT MODIFY THIS CODE!!!!!!!!!!!!
+  // WE ARE ALL USING THE SAME SHARED DATABASE
   WidgetsFlutterBinding.ensureInitialized();
   final database = await $FloorApplicationDatabase.databaseBuilder('app_database.db').build();
   runApp(MyApp(database: database));
@@ -27,9 +30,10 @@ class MyApp extends StatelessWidget {
       routes: {
         '/airplanesPage': (context) => AirplanesPage(database: database),
         '/addAirplanePage': (context) => AddAirplanePage(database: database),
+        '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
 
         // ^^^^^^you guys can add your routes to pages here
-        // IMPORTANT: MAKE SURE TO PASS THE DATABASE TO YOUR PAGES AS PARAMETER
+        // IMPORTANT: MAKE SURE TO PASS THE DATABASE AND PREFERENCES TO YOUR PAGES AS PARAMETER (IF YOU NEED THEM)
     },
 
       home: MyHomePage(title: 'CST2335 Project', database: database),
