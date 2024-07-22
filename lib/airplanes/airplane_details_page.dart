@@ -1,28 +1,26 @@
-import 'package:cst2335_final_project/airplanes/airplane.dart';
-import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
-import 'package:cst2335_final_project/database.dart';
-import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
+import 'package:cst2335_final_project/airplanes/airplane_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Fix shared prefs
+import '../database.dart';
+import 'airplane.dart';
+import 'airplane_dao.dart';
 
-class AddAirplanePage extends StatefulWidget {
+class AirplaneDetailsPage extends StatefulWidget {
   final ApplicationDatabase database;
 
-
-  AddAirplanePage({required this.database}); // take the database from main
+  AirplaneDetailsPage({required this.database});
 
   @override
-  State<AddAirplanePage> createState() => AddAirplanePageState(airplaneDao: database.airplaneDao);
+  State<AirplaneDetailsPage> createState() => AirplaneDetailsPageState(airplaneDao: database.airplaneDao);
 }
 
-class AddAirplanePageState extends State<AddAirplanePage> {
+class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
-  AddAirplanePageState({required this.airplaneDao});
+  AirplaneDetailsPageState({required this.airplaneDao});
 
-  final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
-
-  late AirplaneDao airplaneDao;
+  final AirplaneDao airplaneDao;
+  final originalAirplane = AirplaneRepository.selectedAirplane;
 
   late TextEditingController airplaneTypeController;
   late TextEditingController numberOfPassengersController;
@@ -36,9 +34,8 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     numberOfPassengersController = TextEditingController();
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
+    loadOriginalAirplaneDetails();
 
-    // loadSharedPreferences();
-    // TODO FIX THIS^^^
   }
 
   @override
@@ -89,56 +86,42 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     });
   }
 
-  Future<void> addAirplaneToDatabase(Airplane airplane) async {
-    await airplaneDao.insertAirplane(airplane);
-  }
-
-  Future<void> loadSharedPreferences() async {
-
-    prefs.getString("airplaneType").then((storedAirplaneType) {
-      if (prefs.getString("airplaneType") != "") {
-        airplaneTypeController.text = storedAirplaneType;
-
-      }
-    } );   // TODO FIX THIS
-
-  }
-
-
-  void saveSharedPreferences() async {
-   await prefs.setString("airplaneType", airplaneTypeController.text);
-   await prefs.setString("numberOfPassengers", numberOfPassengersController.text);
-   await prefs.setString("maxSpeed", maxSpeedController.text);
-   await prefs.setString("range", rangeController.text);
-  }
-
-  void clearSharedPreferences() async {
-    setState(() async {
-      await prefs.remove("airplaneType");
-      await prefs.remove("numberOfPassengers");
-      await prefs.remove("maxSpeed");
-      await prefs.remove("range");
+  void loadOriginalAirplaneDetails() {
+    setState(() {
+      airplaneTypeController.text = originalAirplane!.airplaneType;
+      numberOfPassengersController.text = originalAirplane!.numberOfPassengers.toString();
+      maxSpeedController.text = originalAirplane!.maxSpeed.toString();
+      rangeController.text = originalAirplane!.range.toString();
     });
-
   }
+
+  Future<void> updateAirplaneToDatabase(Airplane airplane) async {
+    await airplaneDao.updateAirplane(airplane);
+  }
+
+  Future<void> deleteAirplaneFromDatabase(Airplane airplane) async {
+    await airplaneDao.deleteAirplane(airplane);
+  }
+
+
 
   void alertUserOfSuccessfulInsert(){
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Database updated"),
-          content: const Text("Airplane was added to database successfully."),
+          content: const Text("Database was updated successfully."),
           actions: <Widget>[
             ElevatedButton(
-                onPressed: closeAlertDialog,
-                child: Text("Ok"),
+              onPressed: closeAlertDialog,
+              child: Text("Ok"),
             )
           ],
         )
     );
   }
 
-  void createNewAirplane(){
+  void updateAirplane() {
 
     String airplaneTypeUserInput = airplaneTypeController.value.text;
     String numberOfPassengerUserInput = numberOfPassengersController.value.text;
@@ -163,6 +146,7 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     } else {
       // create an airplane with user inputs
       Airplane airplane = Airplane(
+        airplaneId: originalAirplane?.airplaneId,
           airplaneType: airplaneTypeUserInput,
           numberOfPassengers: int.parse(numberOfPassengerUserInput),
           maxSpeed: int.parse(maxSpeedUserInput),
@@ -170,11 +154,17 @@ class AddAirplanePageState extends State<AddAirplanePage> {
       );
 
       // add airplane to database
-      addAirplaneToDatabase(airplane);
-      saveSharedPreferences();
+      updateAirplaneToDatabase(airplane);
       clearUserInputs();
       alertUserOfSuccessfulInsert();
     }
+  }
+
+  void deleteAirplane() {
+      // add airplane to database
+    deleteAirplaneFromDatabase(originalAirplane!);
+    clearUserInputs();
+    alertUserOfSuccessfulInsert();
   }
 
   @override
@@ -216,14 +206,14 @@ class AddAirplanePageState extends State<AddAirplanePage> {
                 ),
               ),
               ElevatedButton(
-                  onPressed: createNewAirplane,
-                  child: Text("Add new airplane to database")),
+                  onPressed: deleteAirplane,
+                  child: Text("Delete")),
+              ElevatedButton(
+                  onPressed: updateAirplane,
+                  child: Text("Update database")),
               ElevatedButton(
                   onPressed: clearUserInputs,
                   child: Text("Clear form")),
-              ElevatedButton(
-                  onPressed: clearSharedPreferences,
-                  child: Text("Clear preferences")),
             ],
           )
       ),
