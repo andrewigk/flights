@@ -1,21 +1,22 @@
 import 'package:cst2335_final_project/airplanes/airplane.dart';
 import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
+import 'package:cst2335_final_project/database.dart';
 import 'package:flutter/material.dart';
 
 class AddAirplanePage extends StatefulWidget {
+  final ApplicationDatabase database;
+
+  AddAirplanePage({required this.database}); // take the database from main
 
   @override
-  State<AddAirplanePage> createState() => AddAirplanePageState();
+  State<AddAirplanePage> createState() => AddAirplanePageState(airplaneDao: database.airplaneDao); // pass your DAO into the state to use it
 
 }
 
 class AddAirplanePageState extends State<AddAirplanePage> {
 
-  // airplane type
-  // # of passengers
-  // max speed
-  // range in KM
-  // VALIDATE ALL
+  AddAirplanePageState({required this.airplaneDao});
+
 
   late AirplaneDao airplaneDao;
 
