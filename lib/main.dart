@@ -1,15 +1,18 @@
 import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
 import 'package:flutter/material.dart';
+import 'database.dart';
 
-
-void main() {
-  // TODO: Initialize database and DAOs here
-  runApp(const MyApp());
+void main() async { // DO NOT MODIFY THIS CODE!!!!!!!!!!!!
+  WidgetsFlutterBinding.ensureInitialized();
+  final database = await $FloorApplicationDatabase.databaseBuilder('app_database.db').build();
+  runApp(MyApp(database: database));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ApplicationDatabase database;
+
+  const MyApp({super.key, required this.database});
 
   // This widget is the root of your application.
   @override
@@ -22,21 +25,23 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/airplanesPage': (context) => AirplanesPage(),
-        '/addAirplanePage': (context) => AddAirplanePage(),
+        '/airplanesPage': (context) => AirplanesPage(database: database),
+        '/addAirplanePage': (context) => AddAirplanePage(database: database),
 
         // ^^^^^^you guys can add your routes to pages here
+        // IMPORTANT: MAKE SURE TO PASS THE DATABASE TO YOUR PAGES AS PARAMETER
     },
 
-      home: const MyHomePage(title: 'CST2335 Project'),
+      home: MyHomePage(title: 'CST2335 Project', database: database),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title, required this.database});
 
   final String title;
+  final ApplicationDatabase database;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
