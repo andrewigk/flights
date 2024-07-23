@@ -17,6 +17,7 @@ class CustomerAddState extends State<CustomerAdd> {
   late TextEditingController _lastName;
   late TextEditingController _address;
   late TextEditingController _birthday;
+  List<String> customerList = [];
 
   @override
   void initState() {
@@ -25,6 +26,15 @@ class CustomerAddState extends State<CustomerAdd> {
     _lastName = TextEditingController();
     _address = TextEditingController();
     _birthday = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _firstName.dispose();
+    _lastName.dispose();
+    _address.dispose();
+    _birthday.dispose();
+    super.dispose();
   }
 
   @override
@@ -78,7 +88,17 @@ class CustomerAddState extends State<CustomerAdd> {
                 OutlinedButton(child:
                 Text("Save New Customer"),
                     onPressed: (){
+                      var newFName = _firstName.value.text;
+                      var newLName = _lastName.value.text;
+                      var newAddress = _address.value.text;
+                      var newBirthday = _birthday.value.text;
 
+                      setState(() {
+                        customerList.add(newFName);
+                        customerList.add(newLName);
+                        customerList.add(newAddress);
+                        customerList.add(newBirthday);
+                      });
                     }
                 ),
                 ElevatedButton(child:

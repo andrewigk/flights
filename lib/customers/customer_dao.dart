@@ -4,6 +4,7 @@ import 'Customer.dart';
 
 @dao
 abstract class CustomerDAO {
+
   @Query('SELECT * FROM customers')
   Future<List<Customer>> getAllCustomers();
 
@@ -18,4 +19,5 @@ abstract class CustomerDAO {
 
   @delete
   Future<void> deleteCustomer(Customer customer);
+
 }

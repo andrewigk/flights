@@ -1,6 +1,6 @@
 import 'package:floor/floor.dart';
 
-@entity
+@Entity(tableName: 'customers')
 class Customer {
   static int ID = 1;
 
