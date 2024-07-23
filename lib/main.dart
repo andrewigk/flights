@@ -64,7 +64,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void navigateToCustomersListPage() {}
 
-  void navigateToFlightsListPage() {}
+  void navigateToFlightsListPage() {
+    Navigator.pushNamed(context, "/flightsPage");
+  }
 
   void navigateToReservations() {}
 
