@@ -9,6 +9,7 @@ class CustomerAdd extends StatefulWidget {
   }
 }
 
+
 class CustomerAddState extends State<CustomerAdd> {
   late TextEditingController _firstName;
   late TextEditingController _lastName;

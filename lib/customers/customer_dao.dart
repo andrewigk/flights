@@ -1,6 +1,7 @@
 import 'package:floor/floor.dart';
 import 'Customer.dart';
 
+
 @dao
 abstract class CustomerDAO {
   @insert

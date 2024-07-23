@@ -11,6 +11,7 @@ class Customer {
   final String address;
   final int birthday;
 
+
   Customer(this.id, this.firstName, this.lastName, this.address, this.birthday) {
     if(id>=ID) // from database
       ID = id + 1; // ID will always be 1 more than biggest id in database.
