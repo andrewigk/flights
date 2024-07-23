@@ -17,10 +17,7 @@ import 'airplane.dart';
 
 // TODO: make pretty
 // TODO: language support...?
-// TODO: alert dialog to explain how to use interface
 // TODO: Tablet vs phone display
-// TODO: Add a snackbar
-
 
 class AirplanesPage extends StatefulWidget {
   final ApplicationDatabase database;
@@ -45,6 +42,9 @@ class AirplanesPageState extends State<AirplanesPage> {
   void initState() {
     super.initState();
     getAirplanesFromDatabase();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showHelpSnackBar();  // Show Snackbar after the widget is built
+    });
   }
 
   @override
@@ -59,6 +59,44 @@ class AirplanesPageState extends State<AirplanesPage> {
   void navigateToAirplaneDetailsPage(BuildContext context, Airplane airplane) {
     AirplaneRepository.selectedAirplane = airplane;
     Navigator.pushNamed(context, "/airplaneDetailsPage");
+  }
+
+  void showHelpSnackBar() {
+    setState(() {
+      final snackBar = SnackBar(
+        content: Text("Need help?"),
+        duration: Duration(seconds: 5),
+        action: SnackBarAction(
+          label: 'Get help',
+          onPressed: () {
+            displayInstructionDialog();
+          },
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    });
+
+  }
+
+  displayInstructionDialog() {
+    showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Welcome to Airplanes page"),
+          content: const Text("Click 'add airplane button to create a new plane"
+              " OR click on an existing airplane to edit or delete it."),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: closeInstructionDialog,
+              child: Text("Ok"),
+            )
+          ],
+        )
+    );
+  }
+
+  void closeInstructionDialog() {
+    Navigator.pop(context);
   }
 
   Future<void> getAirplanesFromDatabase() async {
