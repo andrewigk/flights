@@ -5,8 +5,8 @@ import 'customer_dao.dart';
 
 
 class CustomerPage extends StatefulWidget {
-  const CustomerPage({super.key, required this.title});
-  final String title;
+  // const CustomerPage({super.key, required this.title});
+  // final String title;
 
   @override
   State<StatefulWidget> createState() {
@@ -48,7 +48,7 @@ class CustomerState extends State<CustomerPage> {
 
           ElevatedButton(child: Text('Add Customer'),
               onPressed: () {
-                Navigator.pushNamed(context, "/pageTwo");
+                Navigator.pushNamed(context, "/addCustomersPage");
               })
         ],
       ),
@@ -93,7 +93,7 @@ class CustomerState extends State<CustomerPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
+          // title: Text(widget.title),
         ),
         body: responsiveLayout()
     );
