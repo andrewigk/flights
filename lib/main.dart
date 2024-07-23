@@ -57,6 +57,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+
+
   void navigateToAirplanesPage() {
       Navigator.pushNamed(context, "/airplanesPage");
   }
@@ -76,6 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    var size = MediaQuery.of(context).size;
+    var height = size.height;
+    var width = size.width;
+    // If landscape:
+    if((width>height) && (width>720)){
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -88,18 +96,23 @@ class _MyHomePageState extends State<MyHomePage> {
               Expanded(child:Row(
                 mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                    onPressed: navigateToCustomersListPage,
-                    child: Text("Customers list page") ),
-                ElevatedButton(
-                    onPressed: navigateToAirplanesPage,
-                    child: Text("Airplanes page") ),
-                ElevatedButton(
-                    onPressed: navigateToFlightsListPage,
-                    child: Text("Flights list page") ),
-                ElevatedButton(
-                    onPressed: navigateToReservations,
-                    child: Text("Reservations page") ),
+                Padding(padding: EdgeInsets.fromLTRB(6,0,6,0),
+                    child:
+                    ElevatedButton(
+                        onPressed: navigateToCustomersListPage,
+                        child: Text("Customers list page") )),
+                Padding(padding: EdgeInsets.fromLTRB(6,0,6,0),
+                    child:ElevatedButton(
+                        onPressed: navigateToAirplanesPage,
+                        child: Text("Airplanes page") )),
+                Padding(padding: EdgeInsets.fromLTRB(6,0,6,0),
+                    child:ElevatedButton(
+                        onPressed: navigateToFlightsListPage,
+                        child: Text("Flights list page") )),
+                Padding(padding: EdgeInsets.fromLTRB(6,0,6,0),
+                    child:ElevatedButton(
+                        onPressed: navigateToReservations,
+                        child: Text("Reservations page") )),
               ],
           )
         )],
@@ -108,4 +121,44 @@ class _MyHomePageState extends State<MyHomePage> {
  // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+    else{
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(child:Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                   child:
+                  ElevatedButton(
+                      onPressed: navigateToCustomersListPage,
+                      child: Text("Customers list page") )),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                    child:ElevatedButton(
+                      onPressed: navigateToAirplanesPage,
+                      child: Text("Airplanes page") )),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                      child:ElevatedButton(
+                      onPressed: navigateToFlightsListPage,
+                      child: Text("Flights list page") )),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 12, 0, 12),
+                      child:ElevatedButton(
+                      onPressed: navigateToReservations,
+                      child: Text("Reservations page") )),
+                ],
+              )
+              )],
+          ),
+        ),
+        // This trailing comma makes auto-formatting nicer for build methods.
+      );
+
+    }
+}
 }
