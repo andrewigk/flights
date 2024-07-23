@@ -16,6 +16,7 @@ import 'airplane.dart';
 * */
 
 // TODO: make pretty
+// TODO: Keep list up to date after, insertions, deletes, updates
 
 
 class AirplanesPage extends StatefulWidget {
