@@ -16,6 +16,7 @@ class FlightsPage extends StatelessWidget {
 
 }*/
 
+
 class FlightsPage extends StatefulWidget {
   final ApplicationDatabase database;
 
@@ -28,10 +29,10 @@ class FlightsPage extends StatefulWidget {
 
 class FlightsPageState extends State<FlightsPage> {
 
-  FlightsPageState({required this.flightDao, required database});
+  FlightsPageState({required this.flightDao, required this.database});
 
   late FlightDao flightDao;
-  late ApplicationDatabase database;
+  final ApplicationDatabase database;
 
   List<Flight> flights = [];
 

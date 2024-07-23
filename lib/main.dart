@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-              Row(
+              Expanded(child:Row(
                 mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text("Reservations page") ),
               ],
           )
-        ],
+        )],
         ),
       ),
  // This trailing comma makes auto-formatting nicer for build methods.

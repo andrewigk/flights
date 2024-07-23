@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hergo.cst2335_final_project">
     <application
         android:label="cst2335_final_project"
         android:name="${applicationName}"
