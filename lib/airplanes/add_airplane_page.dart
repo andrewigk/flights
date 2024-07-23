@@ -76,7 +76,9 @@ class AddAirplanePageState extends State<AddAirplanePage> {
 
   void closeAlertDialog() {
     Navigator.pop(context); // close alert
-    Navigator.pop(context); // go back to airplanes page?
+    Navigator.pop(context); // go back to airplanes page
+    Navigator.pop(context); // go all the way home
+    Navigator.pushNamed(context, "/airplanesPage"); // back to airplanes page
   }
 
   void clearUserInputs(){
