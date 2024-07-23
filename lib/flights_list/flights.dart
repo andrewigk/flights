@@ -8,10 +8,10 @@ class Flight {
 
   @primaryKey
   final int flightId;
-  final String destinationCity;
-  final String departureCity;
-  final String departureTime;
-  final String arrivalTime;
+  String destinationCity;
+  String departureCity;
+  String departureTime;
+  String arrivalTime;
 
   Flight(this.flightId, this.destinationCity, this.departureCity,
       this.departureTime, this.arrivalTime){

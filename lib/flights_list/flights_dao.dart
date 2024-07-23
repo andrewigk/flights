@@ -14,9 +14,9 @@ abstract class FlightDao {
   Future<void> insertFlight(Flight flight);
 
   @update
-  Future<void> updateFlight(Flight flight);
+  Future<int> updateFlight(Flight flight);
 
   @delete
-  Future<void> deleteFlight(Flight flight);
+  Future<int> deleteFlight(Flight flight);
 
 }

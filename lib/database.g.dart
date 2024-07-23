@@ -299,12 +299,13 @@ class _$FlightDao extends FlightDao {
   }
 
   @override
-  Future<void> updateFlight(Flight flight) async {
-    await _flightUpdateAdapter.update(flight, OnConflictStrategy.abort);
+  Future<int> updateFlight(Flight flight) {
+    return _flightUpdateAdapter.updateAndReturnChangedRows(
+        flight, OnConflictStrategy.abort);
   }
 
   @override
-  Future<void> deleteFlight(Flight flight) async {
-    await _flightDeletionAdapter.delete(flight);
+  Future<int> deleteFlight(Flight flight) {
+    return _flightDeletionAdapter.deleteAndReturnChangedRows(flight);
   }
 }

@@ -33,6 +33,10 @@ class FlightsPageState extends State<FlightsPage> {
 
   late FlightDao flightDao;
   final ApplicationDatabase database;
+  late TextEditingController destinationController;
+  late TextEditingController departureController;
+  late TextEditingController arrivalTimeController;
+  late TextEditingController departureTimeController;
 
   List<Flight> flights = [];
 
@@ -42,6 +46,10 @@ class FlightsPageState extends State<FlightsPage> {
   @override
   void initState() {
     super.initState();
+    destinationController = TextEditingController();
+    departureController = TextEditingController();
+    arrivalTimeController = TextEditingController();
+    departureTimeController = TextEditingController();
     flightDao = database.flightDao;   // should initialize DAO object
     flightDao.getAllFlights().then(  (listOfAllItems) {
       setState(() {
@@ -49,6 +57,16 @@ class FlightsPageState extends State<FlightsPage> {
       });
 
     });
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    destinationController.dispose();
+    departureController.dispose();
+    arrivalTimeController.dispose();
+    departureTimeController.dispose();
   }
 
 
@@ -89,7 +107,7 @@ class FlightsPageState extends State<FlightsPage> {
       else{
         return Row(children: [
           Expanded( flex:2, child: FlightList(context)),
-          Expanded( flex:1, child: AddFlightsPage(database: database)),
+          Expanded( flex:1, child: DetailsPage()),
         ]);
       }
 
@@ -100,14 +118,14 @@ class FlightsPageState extends State<FlightsPage> {
         return FlightList(context);
       }
       else {
-        return AddFlightsPage(database: database);
+        return DetailsPage();
       }
     }
   }
   Widget FlightList(BuildContext context){
     return Column(
         children: [
-          Padding(padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+          Padding(padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(
@@ -163,6 +181,10 @@ class FlightsPageState extends State<FlightsPage> {
                                             selectedItem = flights[rowNum];
                                             selectedRow = rowNum;
                                           });
+                                          departureController.text = flights[rowNum].departureCity;
+                                          destinationController.text = flights[rowNum].destinationCity;
+                                          departureTimeController.text = flights[rowNum].departureTime;
+                                          arrivalTimeController.text = flights[rowNum].arrivalTime;
                                         },
                                       ),
                                   ));
@@ -179,11 +201,142 @@ class FlightsPageState extends State<FlightsPage> {
       return Text("");
     }
     else {
-      return Padding(padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+      return Padding(padding: EdgeInsets.fromLTRB(4, 8, 4, 8),
         child: Container(
-            padding: const EdgeInsets.all(10.0),
-            color: Colors.deepPurple[100],
-            child:
+            padding: const EdgeInsets.all(4.0),
+            // color: Colors.deepPurple[100],
+            child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                      Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                    child:
+                    TextField(
+                      controller: departureController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Departure City:",
+                        border: OutlineInputBorder(),
+                        labelText: "Departure"
+                      ),
+                    )),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                      child:
+                    TextField(
+                      controller: destinationController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Destination City: ",
+                        border: OutlineInputBorder(),
+                        labelText: "Destination"
+                      ),
+                    )),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                      child:
+                      TextField(
+                      controller: departureTimeController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Departure Time (24HR): ",
+                        border: OutlineInputBorder(),
+                        labelText: "Departure Time"
+                      ),
+                    )),
+                    Padding(padding: EdgeInsets.fromLTRB(0, 8, 0, 8),
+                      child:TextField(
+                      controller: arrivalTimeController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Arrival Time (24HR): ",
+                        border: OutlineInputBorder(),
+                        labelText: "Arrival Time"
+                      ),
+                    )),
+                    Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
+                        child:
+                        ElevatedButton(child: Text("Update Flight"), onPressed: () {
+                          showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  AlertDialog(
+                                      title: const Text('Update?'),
+                                      content: const Text(
+                                          'Confirm update details?'),
+                                      actions: <Widget>[
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .spaceEvenly,
+                                            children: <Widget>[
+                                              OutlinedButton(onPressed: () {
+                                               selectedItem?.departureCity = departureController.text;
+                                               selectedItem?.destinationCity =destinationController.text;
+                                               selectedItem?.departureTime = departureTimeController.text;
+                                               selectedItem?.arrivalTime = arrivalTimeController.text;
+                                                setState(() {
+                                                  flightDao.updateFlight(
+                                                      selectedItem!);
+                                                  selectedItem = null;
+                                                  Navigator.pop(context);
+                                                });
+                                              },
+                                                  child: Text("Yes")),
+                                              OutlinedButton(onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                                  child: Text("No"))
+
+                                            ]
+                                        )
+
+                                      ]));
+                        }
+                        )),
+                    Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
+                        child:
+                        ElevatedButton(child: Text("Delete Flight"), onPressed: () {
+                          showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) =>
+                                  AlertDialog(
+                                      title: const Text('Delete?'),
+                                      content: const Text(
+                                          'Are you sure you want to delete this flight?'),
+                                      actions: <Widget>[
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment
+                                                .spaceEvenly,
+                                            children: <Widget>[
+                                              OutlinedButton(onPressed: () {
+                                                setState(() {
+                                                  flightDao.deleteFlight(
+                                                      selectedItem!);
+                                                  flights.removeAt(selectedRow);
+                                                  selectedItem = null;
+                                                  Navigator.pop(context);
+                                                });
+                                              },
+                                                  child: Text("Yes")),
+                                              OutlinedButton(onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                                  child: Text("No"))
+
+                                            ]
+                                        )
+
+                                      ]));
+                        }
+                        )),
+                  ],
+                )
+            ),
+
+
+
+
+
+
+
+
+
+
+            /*
             Column(mainAxisAlignment: MainAxisAlignment.start,
 
                 children: [
@@ -298,7 +451,8 @@ class FlightsPageState extends State<FlightsPage> {
                                     ]));
                       }
                       )),
-                ])),
+                ])*/
+        ),
 
 
       );
