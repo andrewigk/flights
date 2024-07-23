@@ -9,7 +9,7 @@ class Customer {
   final String firstName;
   final String lastName;
   final String address;
-  final int birthday;
+  final String birthday;
 
 
   Customer(this.customerId, this.firstName, this.lastName, this.address, this.birthday) {

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'customer_repository.dart';
+
 // Page to add customers.
 class CustomerAdd extends StatefulWidget {
   @override
@@ -13,7 +15,7 @@ class CustomerAdd extends StatefulWidget {
 class CustomerAddState extends State<CustomerAdd> {
   late TextEditingController _firstName;
   late TextEditingController _lastName;
-  late TextEditingController _email;
+  late TextEditingController _address;
   late TextEditingController _birthday;
 
   @override
@@ -21,7 +23,7 @@ class CustomerAddState extends State<CustomerAdd> {
     super.initState();
     _firstName = TextEditingController();
     _lastName = TextEditingController();
-    _email = TextEditingController();
+    _address = TextEditingController();
     _birthday = TextEditingController();
   }
 
@@ -56,9 +58,9 @@ class CustomerAddState extends State<CustomerAdd> {
                 Container(
                     width: 500,
                     child: TextField(
-                        controller: _email,
+                        controller: _address,
                         decoration: InputDecoration(
-                            hintText: "Email",
+                            hintText: "Address",
                             border: OutlineInputBorder()
                         )
                     )
