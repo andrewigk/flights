@@ -40,6 +40,19 @@ class FlightsPageState extends State<FlightsPage> {
   int selectedRow = 0;
 
   @override
+  void initState() {
+    super.initState();
+    flightDao = database.flightDao;   // should initialize DAO object
+    flightDao.getAllFlights().then(  (listOfAllItems) {
+      setState(() {
+        flights.addAll(listOfAllItems);
+      });
+
+    });
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -67,10 +80,19 @@ class FlightsPageState extends State<FlightsPage> {
     var width = size.width;
     // If in landscape orientation
     if((width>height) && (width>720)){
-      return Row(children: [
-        Expanded( flex:2, child: FlightList(context)),
-        Expanded( flex:1, child: AddFlightsPage(database: database)),
+      if(selectedItem == null){
+        return Row(children: [
+            Expanded( flex:2, child: FlightList(context)),
+            Expanded( flex:1, child: Text("")),
       ]);
+      }
+      else{
+        return Row(children: [
+          Expanded( flex:2, child: FlightList(context)),
+          Expanded( flex:1, child: AddFlightsPage(database: database)),
+        ]);
+      }
+
     }
     // Portrait orientation
     else {
@@ -120,25 +142,30 @@ class FlightsPageState extends State<FlightsPage> {
                                       padding: const EdgeInsets.all(10.0),
                                       color: Colors.deepPurple[100],
                                       child:
-                                      Row(mainAxisAlignment: MainAxisAlignment
+                                      GestureDetector(
+                                      child:
+                                      Column(mainAxisAlignment: MainAxisAlignment
                                           .spaceAround,
                                           children: [
-                                            GestureDetector(
-                                              child: Text(
-                                                  "Flight Number: ${rowNum + 1} "),
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedItem = flights[rowNum];
-                                                  selectedRow = rowNum;
-                                                });
-                                              },
-                                            ),
+                                              Text("Flight Number: ${rowNum + 1} "),
                                             Text("Departure: ${flights[rowNum].departureCity}"),
                                             Text("Destination: ${flights[rowNum].destinationCity}"),
-                                            Text("Departure Time: ${flights[rowNum].departureTime}"),
-                                            Text("Arrival Time: ${flights[rowNum].arrivalTime}")
+                                           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                             children: [
+                                               Text("Departure Time: ${flights[rowNum].departureTime}"),
+                                               Text("Arrival Time: ${flights[rowNum].arrivalTime}")
+                                             ]
+                                          )
 
-                                          ])));
+                                          ]),
+                                        onTap: () {
+                                          setState(() {
+                                            selectedItem = flights[rowNum];
+                                            selectedRow = rowNum;
+                                          });
+                                        },
+                                      ),
+                                  ));
                             }
                         ))
                     );

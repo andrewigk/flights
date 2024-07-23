@@ -71,6 +71,7 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
   void closeAlertDialog() {
     Navigator.pop(context);
+    Navigator.pushNamed(context, "/flightsPage");
   }
 
   void clearUserInputs(){
@@ -105,13 +106,6 @@ class AddFlightsPageState extends State<AddFlightsPage> {
   }
 
   void createNewFlight(){
-/*
-    String airplaneTypeUserInput = airplaneTypeController.value.text;
-    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
-    String maxSpeedUserInput = maxSpeedController.value.text;
-    String rangeUserInput = rangeController.value.text;
-
- */
 
     if (!validateUserInputs()) { // Alert user of invalid empty inputs
       showDialog<String>(
@@ -150,7 +144,9 @@ class AddFlightsPageState extends State<AddFlightsPage> {
         title: Text("Add airplane"),
       ),
       body: Center(
-          child: Column(
+          child:
+            SingleChildScrollView(
+            child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextField(
@@ -190,6 +186,6 @@ class AddFlightsPageState extends State<AddFlightsPage> {
             ],
           )
       ),
-    );
+    ));
   }
 }
