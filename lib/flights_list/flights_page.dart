@@ -100,7 +100,7 @@ class FlightsPageState extends State<FlightsPage> {
         return FlightList(context);
       }
       else {
-        return DetailsPage();
+        return AddFlightsPage(database: database);
       }
     }
   }
