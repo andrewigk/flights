@@ -1,9 +1,11 @@
 import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
 import 'package:cst2335_final_project/airplanes/airplane_details_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
+import 'package:cst2335_final_project/flights_list/add_flights_page.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'database.dart';
+import 'flights_list/flights_page.dart';
 
 void main() async { // DO NOT MODIFY THIS CODE!!!!!!!!!!!!
   // WE ARE ALL USING THE SAME SHARED DATABASE
@@ -30,6 +32,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/airplanesPage': (context) => AirplanesPage(database: database),
         '/addAirplanePage': (context) => AddAirplanePage(database: database),
+        '/flightsPage' : (context) => FlightsPage(database: database),
+        '/addFlightsPage' : (context) => AddFlightsPage(database: database)
         '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
 
         // ^^^^^^you guys can add your routes to pages here
@@ -63,7 +67,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void navigateToCustomersListPage() {}
 
-  void navigateToFlightsListPage() {}
+  void navigateToFlightsListPage() {
+    Navigator.pushNamed(context, "/flightsPage");
+  }
 
   void navigateToReservations() {}
 
@@ -79,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-              Row(
+              Expanded(child:Row(
                 mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
@@ -96,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text("Reservations page") ),
               ],
           )
-        ],
+        )],
         ),
       ),
  // This trailing comma makes auto-formatting nicer for build methods.
