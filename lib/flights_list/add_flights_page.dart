@@ -3,6 +3,7 @@ import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
 import 'package:cst2335_final_project/database.dart';
 import 'package:flutter/material.dart';
 
+import 'flights.dart';
 import 'flights_dao.dart';
 
 class AddFlightsPage extends StatefulWidget {
@@ -22,49 +23,46 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
   late FlightDao flightDao;
 
-  late TextEditingController airplaneTypeController;
-  late TextEditingController numberOfPassengersController;
-  late TextEditingController maxSpeedController;
-  late TextEditingController rangeController;
+  late TextEditingController destinationController;
+  late TextEditingController departureController;
+  late TextEditingController arrivalTimeController;
+  late TextEditingController departureTimeController;
+
 
   @override
   void initState() {
     super.initState();
-    airplaneTypeController = TextEditingController();
-    numberOfPassengersController = TextEditingController();
-    maxSpeedController = TextEditingController();
-    rangeController = TextEditingController();
+    destinationController = TextEditingController();
+    departureController = TextEditingController();
+    arrivalTimeController = TextEditingController();
+    departureTimeController = TextEditingController();
   }
 
   @override
   void dispose() {
     super.dispose();
-    airplaneTypeController.dispose();
-    numberOfPassengersController.dispose();
-    maxSpeedController.dispose();
-    rangeController.dispose();
+    destinationController.dispose();
+    departureController.dispose();
+    arrivalTimeController.dispose();
+    departureTimeController.dispose();
   }
 
   bool validateUserInputs() {
 
-    String airplaneTypeUserInput = airplaneTypeController.value.text;
-    String numberOfPassengerUserInput = numberOfPassengersController.value.text;
-    String maxSpeedUserInput = maxSpeedController.value.text;
-    String rangeUserInput = rangeController.value.text;
-
-    if (airplaneTypeUserInput == "") {
+    if (destinationController.value.text == "") {
       return false;
     }
 
-    if (numberOfPassengerUserInput == "") {
+    if (departureController.value.text == "") {
+      return false;
+    }
+    //TODO: Implement a more robust validation to parse the entered string and
+    //TODO: validate that it's an actual time
+    if (arrivalTimeController.value.text == "") {
       return false;
     }
 
-    if (maxSpeedUserInput == "") {
-      return false;
-    }
-
-    if (rangeUserInput == "") {
+    if (departureTimeController.value.text == "") {
       return false;
     }
 
@@ -77,23 +75,25 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
   void clearUserInputs(){
     setState(() {
-      airplaneTypeController.clear();
-      numberOfPassengersController.clear();
-      maxSpeedController.clear();
-      rangeController.clear();
+      destinationController.clear();
+      departureController.clear();
+      arrivalTimeController.clear();
+      departureTimeController.clear();
     });
   }
-
+/*
   Future<void> addAirplaneToDatabase(Airplane airplane) async {
     await airplaneDao.insertAirplane(airplane);
   }
+
+ */
 
   void alertUserOfSuccessfulInsert(){
     showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Database updated"),
-          content: const Text("Airplane was added to database successfully."),
+          content: const Text("Flight was added to database successfully."),
           actions: <Widget>[
             ElevatedButton(
               onPressed: closeAlertDialog,
@@ -104,12 +104,14 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     );
   }
 
-  void createNewAirplane(){
-
+  void createNewFlight(){
+/*
     String airplaneTypeUserInput = airplaneTypeController.value.text;
     String numberOfPassengerUserInput = numberOfPassengersController.value.text;
     String maxSpeedUserInput = maxSpeedController.value.text;
     String rangeUserInput = rangeController.value.text;
+
+ */
 
     if (!validateUserInputs()) { // Alert user of invalid empty inputs
       showDialog<String>(
@@ -128,15 +130,14 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
     } else {
       // create an airplane with user inputs
-      Airplane airplane = Airplane(
-          airplaneType: airplaneTypeUserInput,
-          numberOfPassengers: int.parse(numberOfPassengerUserInput),
-          maxSpeed: int.parse(maxSpeedUserInput),
-          range: int.parse(rangeUserInput)
+      var flight = Flight(
+          Flight.ID++, destinationController.value.text,
+          departureController.value.text, arrivalTimeController.value.text,
+          departureTimeController.value.text
       );
 
-      // add airplane to database
-      addAirplaneToDatabase(airplane);
+      // add flight to database
+      flightDao.insertFlight(flight);
       clearUserInputs();
       alertUserOfSuccessfulInsert();
     }
@@ -153,36 +154,36 @@ class AddFlightsPageState extends State<AddFlightsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextField(
-                controller: airplaneTypeController,
+                controller: departureController,
                 decoration: InputDecoration(
-                  hintText: "Enter air plane type",
+                  hintText: "Enter Departure City:",
                   border: OutlineInputBorder(),
                 ),
               ),
               TextField(
-                controller:numberOfPassengersController,
+                controller: destinationController,
                 decoration: InputDecoration(
-                  hintText: "Enter # of passengers",
+                  hintText: "Enter Destination City: ",
                   border: OutlineInputBorder(),
                 ),
               ),
               TextField(
-                controller: maxSpeedController,
+                controller: departureTimeController,
                 decoration: InputDecoration(
-                  hintText: "Enter maximum speed (km/h)",
+                  hintText: "Enter Departure Time (24HR): ",
                   border: OutlineInputBorder(),
                 ),
               ),
               TextField(
-                controller: rangeController,
+                controller: arrivalTimeController,
                 decoration: InputDecoration(
-                  hintText: "Enter range in km",
+                  hintText: "Enter Arrival Time (24HR): ",
                   border: OutlineInputBorder(),
                 ),
               ),
               ElevatedButton(
-                  onPressed: createNewAirplane,
-                  child: Text("Add new airplane to database")),
+                  onPressed: createNewFlight,
+                  child: Text("Add new flight route to database")),
               ElevatedButton(
                   onPressed: clearUserInputs,
                   child: Text("Clear form")),
