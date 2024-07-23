@@ -82,6 +82,62 @@ class FlightsPageState extends State<FlightsPage> {
           // the App.build method, and use it to set our appbar title.
           title: Text("Flights Page"),
           actions: [
+            ElevatedButton(child: Text("Help"), onPressed: () {
+              showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) =>
+                  AlertDialog(
+                    title: const Text('How to Use:'),
+                    actions: <Widget>[
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Flexible(
+                            fit: FlexFit.loose,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Add new flights by clicking the 'Add new flight route' button.",
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16.0), // Add some spacing between the items
+                          Flexible(
+                            fit: FlexFit.loose,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Click or tap on a flight in the list to view more details and update/delete existing flights.",
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 16.0), // Add some spacing between the items
+                          Flexible(
+                            fit: FlexFit.loose,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Tap anywhere to exit this dialog.",
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ));
+
+              }),
+
             ElevatedButton(child: Text("Back to List"), onPressed: () {
               setState(() {
                 selectedItem = null;
@@ -98,19 +154,10 @@ class FlightsPageState extends State<FlightsPage> {
     var width = size.width;
     // If in landscape orientation
     if((width>height) && (width>720)){
-      if(selectedItem == null){
-        return Row(children: [
-            Expanded( flex:2, child: FlightList(context)),
-            Expanded( flex:1, child: Text("")),
-      ]);
-      }
-      else{
-        return Row(children: [
+      return Row(children: [
           Expanded( flex:2, child: FlightList(context)),
-          Expanded( flex:1, child: DetailsPage()),
-        ]);
-      }
-
+           Expanded( flex:1, child: DetailsPage()),
+      ]);
     }
     // Portrait orientation
     else {
@@ -326,132 +373,6 @@ class FlightsPageState extends State<FlightsPage> {
                   ],
                 )
             ),
-
-
-
-
-
-
-
-
-
-
-            /*
-            Column(mainAxisAlignment: MainAxisAlignment.start,
-
-                children: [
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 64, 16, 0),
-                            child: Text("Flight selected is: ",
-                                style: TextStyle(fontSize: 16))
-                        )
-                      ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child:
-                            Text(selectedItem!.flightId.toString(),
-                                style: TextStyle(fontSize: 18)))
-                      ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: Text("Departure city is: ${selectedItem!.departureCity}",
-                                style: TextStyle(fontSize: 12))),
-                      ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: Text("Destination city is: ${selectedItem!.destinationCity}",
-                                style: TextStyle(fontSize: 12))),
-                      ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: Text("Departure time is: ${selectedItem!.departureTime}",
-                                style: TextStyle(fontSize: 12))),
-                      ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                            child: Text("Arrival time is: ${selectedItem!.arrivalTime}",
-                                style: TextStyle(fontSize: 12))),
-                      ]),
-                  Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                      child:
-                      ElevatedButton(child: Text("Update Task"), onPressed: () {
-                        showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                AlertDialog(
-                                    title: const Text('Update?'),
-                                    content: const Text(
-                                        'Are you sure you want to delete this item?'),
-                                    actions: <Widget>[
-                                      Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceEvenly,
-                                          children: <Widget>[
-                                            OutlinedButton(onPressed: () {
-                                              setState(() {
-                                                flightDao.deleteFlight(
-                                                    selectedItem!);
-                                                flights.removeAt(selectedRow);
-                                                selectedItem = null;
-                                                Navigator.pop(context);
-                                              });
-                                            },
-                                                child: Text("Yes")),
-                                            OutlinedButton(onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                                child: Text("No"))
-
-                                          ]
-                                      )
-
-                                    ]));
-                      }
-                      )),
-                  Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-                      child:
-                      ElevatedButton(child: Text("Delete Task"), onPressed: () {
-                        showDialog<String>(
-                            context: context,
-                            builder: (BuildContext context) =>
-                                AlertDialog(
-                                    title: const Text('Delete?'),
-                                    content: const Text(
-                                        'Are you sure you want to delete this item?'),
-                                    actions: <Widget>[
-                                      Row(
-                                          mainAxisAlignment: MainAxisAlignment
-                                              .spaceEvenly,
-                                          children: <Widget>[
-                                            OutlinedButton(onPressed: () {
-                                              setState(() {
-                                                flightDao.deleteFlight(
-                                                    selectedItem!);
-                                                flights.removeAt(selectedRow);
-                                                selectedItem = null;
-                                                Navigator.pop(context);
-                                              });
-                                            },
-                                                child: Text("Yes")),
-                                            OutlinedButton(onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                                child: Text("No"))
-
-                                          ]
-                                      )
-
-                                    ]));
-                      }
-                      )),
-                ])*/
         ),
 
 
