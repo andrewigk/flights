@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         '/airplanesPage': (context) => AirplanesPage(database: database),
         '/addAirplanePage': (context) => AddAirplanePage(database: database),
         '/flightsPage' : (context) => FlightsPage(database: database),
-        '/addFlightsPage' : (context) => AddFlightsPage(database: database)
+        '/addFlightsPage' : (context) => AddFlightsPage(database: database),
         '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
 
         // ^^^^^^you guys can add your routes to pages here
