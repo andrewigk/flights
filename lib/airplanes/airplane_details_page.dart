@@ -74,8 +74,10 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
   }
 
   void closeAlertDialog() {
-    Navigator.pop(context);
-    Navigator.pop(context);
+    Navigator.pop(context); // close alert
+    Navigator.pop(context); // go back to airplanes page
+    Navigator.pop(context); // go all the way home
+    Navigator.pushNamed(context, "/airplanesPage"); // back to airplanes page
   }
 
   void clearUserInputs(){

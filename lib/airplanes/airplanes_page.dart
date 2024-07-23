@@ -90,7 +90,14 @@ class AirplanesPageState extends State<AirplanesPage> {
                         navigateToAirplaneDetailsPage(context, airplanes[index]);
                       },
                       child: ListTile(
-                        title: Text("Type: ${airplanes[index].airplaneType}"),
+                        title: Text(
+                            "ID: ${airplanes[index].airplaneId}"
+                            " Type: ${airplanes[index].airplaneType}"
+                                " Passengers: ${airplanes[index].numberOfPassengers}"
+                                " Max speed (km/h): ${airplanes[index].range}"
+                                " Range (km): ${airplanes[index].range}"
+                        ),
+
                       ),
                     );
                     },
