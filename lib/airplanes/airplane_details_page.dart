@@ -35,7 +35,6 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
     loadOriginalAirplaneDetails();
-
   }
 
   @override
@@ -91,10 +90,20 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
   void loadOriginalAirplaneDetails() {
     setState(() {
-      airplaneTypeController.text = originalAirplane!.airplaneType;
-      numberOfPassengersController.text = originalAirplane!.numberOfPassengers.toString();
-      maxSpeedController.text = originalAirplane!.maxSpeed.toString();
-      rangeController.text = originalAirplane!.range.toString();
+      // Check if the originalAirplane object is null or any of its attributes
+      if (originalAirplane != null) {
+        // If the originalAirplane is not null, set the text fields with its values
+        airplaneTypeController.text = originalAirplane?.airplaneType ?? 'No data available';
+        numberOfPassengersController.text = originalAirplane?.numberOfPassengers?.toString() ?? 'No data available';
+        maxSpeedController.text = originalAirplane?.maxSpeed?.toString() ?? 'No data available';
+        rangeController.text = originalAirplane?.range?.toString() ?? 'No data available';
+      } else {
+        // If the originalAirplane is null, display a message in the text fields
+        airplaneTypeController.text = 'No airplane selected';
+        numberOfPassengersController.text = 'No airplane selected';
+        maxSpeedController.text = 'No airplane selected';
+        rangeController.text = 'No airplane selected';
+      }
     });
   }
 
