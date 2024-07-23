@@ -16,7 +16,10 @@ import 'airplane.dart';
 * */
 
 // TODO: make pretty
-// TODO: Keep list up to date after, insertions, deletes, updates
+// TODO: language support...?
+// TODO: alert dialog to explain how to use interface
+// TODO: Tablet vs phone display
+// TODO: Add a snackbar
 
 
 class AirplanesPage extends StatefulWidget {
