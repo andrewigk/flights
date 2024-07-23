@@ -1,10 +1,10 @@
 import 'package:cst2335_final_project/airplanes/airplane.dart';
 import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
+import 'package:cst2335_final_project/airplanes/airplane_repository.dart';
 import 'package:cst2335_final_project/database.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-// TODO: Fix shared prefs
 
 class AddAirplanePage extends StatefulWidget {
   final ApplicationDatabase database;
@@ -19,8 +19,6 @@ class AddAirplanePage extends StatefulWidget {
 class AddAirplanePageState extends State<AddAirplanePage> {
 
   AddAirplanePageState({required this.airplaneDao});
-
-  final EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
 
   late AirplaneDao airplaneDao;
 
@@ -37,8 +35,8 @@ class AddAirplanePageState extends State<AddAirplanePage> {
     maxSpeedController = TextEditingController();
     rangeController = TextEditingController();
 
-    // loadSharedPreferences();
-    // TODO FIX THIS^^^
+    loadSharedPreferences();
+
   }
 
   @override
@@ -77,7 +75,8 @@ class AddAirplanePageState extends State<AddAirplanePage> {
   }
 
   void closeAlertDialog() {
-    Navigator.pop(context);
+    Navigator.pop(context); // close alert
+    Navigator.pop(context); // go back to airplanes page?
   }
 
   void clearUserInputs(){
@@ -94,32 +93,30 @@ class AddAirplanePageState extends State<AddAirplanePage> {
   }
 
   Future<void> loadSharedPreferences() async {
-
-    prefs.getString("airplaneType").then((storedAirplaneType) {
-      if (prefs.getString("airplaneType") != "") {
-        airplaneTypeController.text = storedAirplaneType;
-
-      }
-    } );   // TODO FIX THIS
+    AirplaneRepository.loadData();
+    airplaneTypeController.text = AirplaneRepository.airplaneType;
+    numberOfPassengersController.text = AirplaneRepository.numberOfPassengers;
+    maxSpeedController.text = AirplaneRepository.maxSpeed;
+    rangeController.text = AirplaneRepository.range;
 
   }
 
 
   void saveSharedPreferences() async {
-   await prefs.setString("airplaneType", airplaneTypeController.text);
-   await prefs.setString("numberOfPassengers", numberOfPassengersController.text);
-   await prefs.setString("maxSpeed", maxSpeedController.text);
-   await prefs.setString("range", rangeController.text);
+   AirplaneRepository.airplaneType = airplaneTypeController.text;
+   AirplaneRepository.numberOfPassengers = numberOfPassengersController.text;
+   AirplaneRepository.maxSpeed = maxSpeedController.text;
+   AirplaneRepository.range = rangeController.text;
+   AirplaneRepository.saveData();
   }
 
   void clearSharedPreferences() async {
-    setState(() async {
-      await prefs.remove("airplaneType");
-      await prefs.remove("numberOfPassengers");
-      await prefs.remove("maxSpeed");
-      await prefs.remove("range");
-    });
-
+    AirplaneRepository.airplaneType = "";
+    AirplaneRepository.numberOfPassengers = "";
+    AirplaneRepository.maxSpeed = "";
+    AirplaneRepository.range = "";
+    AirplaneRepository.saveData();
+    clearUserInputs();
   }
 
   void alertUserOfSuccessfulInsert(){
