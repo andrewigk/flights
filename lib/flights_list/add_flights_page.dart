@@ -1,10 +1,12 @@
 import 'package:cst2335_final_project/airplanes/airplane.dart';
 import 'package:cst2335_final_project/airplanes/airplane_dao.dart';
 import 'package:cst2335_final_project/database.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 import 'flights.dart';
 import 'flights_dao.dart';
+import 'flights_repository.dart';
 
 class AddFlightsPage extends StatefulWidget {
   final ApplicationDatabase database;
@@ -32,10 +34,14 @@ class AddFlightsPageState extends State<AddFlightsPage> {
   @override
   void initState() {
     super.initState();
+
     destinationController = TextEditingController();
     departureController = TextEditingController();
     arrivalTimeController = TextEditingController();
     departureTimeController = TextEditingController();
+    loadSharedPreferences();
+
+
   }
 
   @override
@@ -82,12 +88,69 @@ class AddFlightsPageState extends State<AddFlightsPage> {
       departureTimeController.clear();
     });
   }
-/*
-  Future<void> addAirplaneToDatabase(Airplane airplane) async {
-    await airplaneDao.insertAirplane(airplane);
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Moved ScaffoldMessenger logic here
+    loadSharedPreferences();
   }
 
- */
+  Future<void> loadSharedPreferences() async {
+    FlightRepository.loadData();
+    departureController.text = FlightRepository.departureCity;
+    destinationController.text = FlightRepository.destinationCity;
+    arrivalTimeController.text = FlightRepository.departureTime;
+    departureTimeController.text = FlightRepository.arrivalTime;
+    var departure = departureController.text;
+    var destination = destinationController.text;
+    var arrivalTime = arrivalTimeController.text;
+    var departureTime = departureTimeController.text;
+
+    if (departure != "" || destination != "" || arrivalTime != "" || departureTime != "") {
+      final snackBar = SnackBar(
+        content: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(child: Text('Previously selected flight details have been loaded.')),
+            SnackBarAction(
+              label: 'Clear Saved Data',
+              onPressed: () {
+                EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
+                prefs.remove("departureCity");
+                prefs.remove("destinationCity");
+                prefs.remove("departureTime");
+                prefs.remove("arrivalTime");
+                clearSharedPreferences();
+              },
+            ),
+          ],
+        ),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+
+
+
+  }
+
+
+  void saveSharedPreferences() async {
+    final prefs = EncryptedSharedPreferences();
+    FlightRepository.departureCity = departureController.text;
+    FlightRepository.destinationCity = destinationController.text;
+    FlightRepository.departureTime = arrivalTimeController.text;
+    FlightRepository.arrivalTime = departureTimeController.text;
+    FlightRepository.saveData();
+  }
+
+  void clearSharedPreferences() async {
+    FlightRepository.departureCity = "";
+    FlightRepository.destinationCity = "";
+    FlightRepository.departureTime = "";
+    FlightRepository.arrivalTime = "";
+    FlightRepository.saveData();
+    clearUserInputs();
+  }
 
   void alertUserOfSuccessfulInsert(){
     showDialog<String>(
@@ -132,6 +195,7 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
       // add flight to database
       flightDao.insertFlight(flight);
+      saveSharedPreferences();
       clearUserInputs();
       alertUserOfSuccessfulInsert();
     }
