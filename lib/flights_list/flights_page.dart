@@ -23,16 +23,25 @@ class FlightsPageState extends State<FlightsPage> {
 
   FlightsPageState({required this.flightDao, required this.database});
 
+  /** The instance of the flight DAO that performs DB operations. */
   late FlightDao flightDao;
+  /** The instance of the database that is already initialized in main. */
   final ApplicationDatabase database;
+
   late TextEditingController destinationController;
   late TextEditingController departureController;
   late TextEditingController arrivalTimeController;
   late TextEditingController departureTimeController;
 
+  /** A list of Flight objects to store objects created in runtime. */
   List<Flight> flights = [];
 
+  /** A variable to store a specific instance of a Flight. */
   Flight? selectedItem;
+
+  /** A variable to store the specific row number or index from a ListView for
+   * use in later logic.
+   */
   int selectedRow = 0;
 
   @override
@@ -43,7 +52,7 @@ class FlightsPageState extends State<FlightsPage> {
     arrivalTimeController = TextEditingController();
     departureTimeController = TextEditingController();
     flightDao = database.flightDao;   // should initialize DAO object
-    flightDao.getAllFlights().then(  (listOfAllItems) {
+    flightDao.getAllFlights().then(  (listOfAllItems) {   // get all existing items then load into list to be displayed in listview
       setState(() {
         flights.addAll(listOfAllItems);
       });
@@ -61,6 +70,9 @@ class FlightsPageState extends State<FlightsPage> {
     departureTimeController.dispose();
   }
 
+  /** Saves shared preferences when called, setting the repository values then
+   * calling the save function for persistence.
+   */
   void saveSharedPreferences() async {
     FlightRepository.departureCity = departureController.text;
     FlightRepository.destinationCity = destinationController.text;
@@ -78,8 +90,6 @@ class FlightsPageState extends State<FlightsPage> {
               .of(context)
               .colorScheme
               .inversePrimary,
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
           title: Text("Flights Page"),
           actions: [
             ElevatedButton(child: Text("Help"), onPressed: () {
@@ -105,7 +115,7 @@ class FlightsPageState extends State<FlightsPage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 16.0), // Add some spacing between the items
+                          SizedBox(height: 16.0),
                           Flexible(
                             fit: FlexFit.loose,
                             child: Column(
@@ -118,7 +128,7 @@ class FlightsPageState extends State<FlightsPage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 16.0), // Add some spacing between the items
+                          SizedBox(height: 16.0),
                           Flexible(
                             fit: FlexFit.loose,
                             child: Column(
@@ -145,9 +155,12 @@ class FlightsPageState extends State<FlightsPage> {
             }),
           ],
         ),
-        body: responsiveLayout(context));
+        body: responsiveLayout(context));  // body for the main build widget is responsiveLayout
   }
 
+  /** responsiveLayout takes a media query, sets variables, then performs conditional
+   * logic based on the dimensions of the display.
+   */
   Widget responsiveLayout(BuildContext context){
     var size = MediaQuery.of(context).size;
     var height = size.height;
@@ -169,10 +182,12 @@ class FlightsPageState extends State<FlightsPage> {
       }
     }
   }
+
+  /** Flight List displays Listview of all flights */
   Widget FlightList(BuildContext context){
     return Column(
         children: [
-          Padding(padding: EdgeInsets.fromLTRB(16, 16, 16, 0),
+          Padding(padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.center, children: [
               ElevatedButton(
@@ -182,7 +197,6 @@ class FlightsPageState extends State<FlightsPage> {
                   child: Text("Add new flight route"))
             ]),
           ),
-
           Builder(
               builder: (BuildContext context) {
                 if (flights.isEmpty) {
@@ -196,7 +210,7 @@ class FlightsPageState extends State<FlightsPage> {
                 else {
                   return
                     Expanded(child: Padding(
-                        padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
+                        padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
                         child:
                         ListView.builder(
                             itemCount: flights.length,
@@ -225,8 +239,8 @@ class FlightsPageState extends State<FlightsPage> {
                                           ]),
                                         onTap: () {
                                           setState(() {
-                                            selectedItem = flights[rowNum];
-                                            selectedRow = rowNum;
+                                            selectedItem = flights[rowNum];   // On tap of an item, sets listview-local variables to instance variables
+                                            selectedRow = rowNum;             // for later use.
                                           });
                                           departureController.text = flights[rowNum].departureCity;
                                           destinationController.text = flights[rowNum].destinationCity;
@@ -247,6 +261,10 @@ class FlightsPageState extends State<FlightsPage> {
         ]);
   }
 
+  /** Details Page displays a very similar view to add new flight, but replaces the add button
+   * with an update and delete button. Only displays when an item in the listview is
+   * selected.
+   */
   Widget DetailsPage() {
     if (selectedItem == null) {
       return Text("");
@@ -315,11 +333,13 @@ class FlightsPageState extends State<FlightsPage> {
                                                 .spaceEvenly,
                                             children: <Widget>[
                                               OutlinedButton(onPressed: () {
+                                                // Set the specific selected item instance to update
                                                selectedItem?.departureCity = departureController.text;
                                                selectedItem?.destinationCity =destinationController.text;
                                                selectedItem?.departureTime = departureTimeController.text;
                                                selectedItem?.arrivalTime = arrivalTimeController.text;
                                                 setState(() {
+                                                  // Process the update via the DAO and then reset the selectedItem reference
                                                   flightDao.updateFlight(
                                                       selectedItem!);
                                                   selectedItem = null;
@@ -355,8 +375,10 @@ class FlightsPageState extends State<FlightsPage> {
                                             children: <Widget>[
                                               OutlinedButton(onPressed: () {
                                                 setState(() {
+                                                  // Call the DAO function on the specific flight instance stored in DB
                                                   flightDao.deleteFlight(
                                                       selectedItem!);
+                                                  // Then remove the local instance of flight from the List[]
                                                   flights.removeAt(selectedRow);
                                                   selectedItem = null;
                                                   Navigator.pop(context);
