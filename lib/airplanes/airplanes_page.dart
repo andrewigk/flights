@@ -1,4 +1,5 @@
 import 'package:cst2335_final_project/airplanes/airplane_repository.dart';
+import 'package:cst2335_final_project/airplanes/responsive_airplane_details_page.dart';
 import 'package:cst2335_final_project/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -142,7 +143,11 @@ class AirplanesPageState extends State<AirplanesPage> {
                         onTap: () {
                           AirplaneRepository.selectedAirplane =
                           airplanes[index];
-                          setState(() {}); // Refresh the side-by-side view
+                          setState(() {
+
+                            Navigator.pop(context); // go all the way home
+                            Navigator.pushNamed(context, "/airplanesPage");
+                          }); // Refresh the side-by-side view
                         },
                         child: ListTile(
                           title: Text(
@@ -161,7 +166,7 @@ class AirplanesPageState extends State<AirplanesPage> {
             ),
           ),
           Expanded(
-            child: AirplaneDetailsPage(database: database),
+            child: ResponsiveAirplaneDetailsPage(database: database),
           ),
         ],
       ),
