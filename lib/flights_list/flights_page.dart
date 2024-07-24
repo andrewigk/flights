@@ -1,20 +1,12 @@
 import 'package:cst2335_final_project/database.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'add_flights_page.dart';
 import 'flights.dart';
 import 'flights_dao.dart';
-
-
-/*
-class FlightsPage extends StatelessWidget {
-  final ApplicationDatabase database;
-
-
-  FlightsPage({required this.database});
-
-}*/
+import 'flights_repository.dart';
 
 
 class FlightsPage extends StatefulWidget {
@@ -67,6 +59,14 @@ class FlightsPageState extends State<FlightsPage> {
     departureController.dispose();
     arrivalTimeController.dispose();
     departureTimeController.dispose();
+  }
+
+  void saveSharedPreferences() async {
+    FlightRepository.departureCity = departureController.text;
+    FlightRepository.destinationCity = destinationController.text;
+    FlightRepository.departureTime = arrivalTimeController.text;
+    FlightRepository.arrivalTime = departureTimeController.text;
+    FlightRepository.saveData();
   }
 
 
@@ -232,6 +232,10 @@ class FlightsPageState extends State<FlightsPage> {
                                           destinationController.text = flights[rowNum].destinationCity;
                                           departureTimeController.text = flights[rowNum].departureTime;
                                           arrivalTimeController.text = flights[rowNum].arrivalTime;
+
+                                          saveSharedPreferences();
+
+
                                         },
                                       ),
                                   ));
