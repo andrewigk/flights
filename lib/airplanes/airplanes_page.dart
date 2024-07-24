@@ -83,7 +83,7 @@ class AirplanesPageState extends State<AirplanesPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: const Text("Welcome to Airplanes page"),
-          content: const Text("Click 'add airplane button to create a new plane"
+          content: const Text("Click 'add new airplane' button to create a new plane"
               " OR click on an existing airplane to edit or delete it."),
           actions: <Widget>[
             ElevatedButton(
