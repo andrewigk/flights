@@ -17,7 +17,7 @@ class CustomerPage extends StatefulWidget {
 class CustomerState extends State<CustomerPage> {
   late TextEditingController _controller;
   var listCustomers = <Customer>[];
-  late CustomerDAO customerDAO;
+  late CustomerDao customerDAO;
 
   @override
   void initState() {
@@ -37,15 +37,6 @@ class CustomerState extends State<CustomerPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text('Customer List', style: TextStyle(fontSize: 30)),
-          TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                  hintText: "Type Here",
-                  border: OutlineInputBorder(),
-                  labelText: "Enter a customer"
-              )
-          ),
-
           ElevatedButton(child: Text('Add Customer'),
               onPressed: () {
                 Navigator.pushNamed(context, "/addCustomersPage");

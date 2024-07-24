@@ -2,19 +2,19 @@ import 'package:floor/floor.dart';
 
 @Entity(tableName: 'customers')
 class Customer {
-  static int ID = 1;
+  static int cID = 1;
 
   @primaryKey //unique ID numbers
   final int customerId;
-  final String firstName;
-  final String lastName;
-  final String address;
-  final String birthday;
+  String firstName;
+  String lastName;
+  String address;
+  String birthday;
 
 
   Customer(this.customerId, this.firstName, this.lastName, this.address, this.birthday) {
-    if(customerId>=ID) // from database
-      ID = customerId + 1; // ID will always be 1 more than biggest id in database.
+    if(customerId>=cID) // from database
+      cID = customerId + 1; // ID will always be 1 more than biggest id in database.
   }
 
   Map<String, dynamic> toMap() {
