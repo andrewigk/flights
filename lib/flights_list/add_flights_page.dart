@@ -22,9 +22,10 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
   AddFlightsPageState({required this.flightDao});
 
-
+  /** Late initialization of DAO so that we can use it later */
   late FlightDao flightDao;
 
+  /** Text editing controllers for user input */
   late TextEditingController destinationController;
   late TextEditingController departureController;
   late TextEditingController arrivalTimeController;
@@ -34,7 +35,6 @@ class AddFlightsPageState extends State<AddFlightsPage> {
   @override
   void initState() {
     super.initState();
-
     destinationController = TextEditingController();
     departureController = TextEditingController();
     arrivalTimeController = TextEditingController();
@@ -53,6 +53,7 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     departureTimeController.dispose();
   }
 
+  /** Validates user inputs and returns a boolean. */
   bool validateUserInputs() {
 
     if (destinationController.value.text == "") {
@@ -62,8 +63,7 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     if (departureController.value.text == "") {
       return false;
     }
-    //TODO: Implement a more robust validation to parse the entered string and
-    //TODO: validate that it's an actual time
+
     if (arrivalTimeController.value.text == "") {
       return false;
     }
@@ -75,11 +75,17 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     return true;
   }
 
+  /** Closes an alert dialog by popping to the previous page, then returning to
+   * the main flight page.
+   */
   void closeAlertDialog() {
     Navigator.pop(context);
     Navigator.pushNamed(context, "/flightsPage");
   }
 
+  /** Clears user inputs in the text fields when called.
+   *
+   */
   void clearUserInputs(){
     setState(() {
       destinationController.clear();
@@ -88,13 +94,19 @@ class AddFlightsPageState extends State<AddFlightsPage> {
       departureTimeController.clear();
     });
   }
+
+  /** Special function required to be called to resolve conflicts with
+   * states and loading of various elements at init.
+   */
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Moved ScaffoldMessenger logic here
     loadSharedPreferences();
   }
 
+  /** Loads data that is set to shared preferences, and displays a notification
+   * if data is loaded into the text fields.
+   */
   Future<void> loadSharedPreferences() async {
     FlightRepository.loadData();
     departureController.text = FlightRepository.departureCity;
@@ -133,7 +145,9 @@ class AddFlightsPageState extends State<AddFlightsPage> {
 
   }
 
-
+  /** Saves shared preferences when called, setting the repository values then
+   * calling the save function for persistence.
+   */
   void saveSharedPreferences() async {
     final prefs = EncryptedSharedPreferences();
     FlightRepository.departureCity = departureController.text;
@@ -143,6 +157,9 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     FlightRepository.saveData();
   }
 
+  /** Clears the shared preferences stored, and clears user inputs from
+   * text fields.
+   */
   void clearSharedPreferences() async {
     FlightRepository.departureCity = "";
     FlightRepository.destinationCity = "";
@@ -152,6 +169,10 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     clearUserInputs();
   }
 
+
+  /** Creates an alert dialog that notifies user that an insert was successful.
+   *
+   */
   void alertUserOfSuccessfulInsert(){
     showDialog<String>(
         context: context,
@@ -168,8 +189,10 @@ class AddFlightsPageState extends State<AddFlightsPage> {
     );
   }
 
+  /** Adds an entry to the DB if validation succeeds.
+   *
+   */
   void createNewFlight(){
-
     if (!validateUserInputs()) { // Alert user of invalid empty inputs
       showDialog<String>(
           context: context,
@@ -184,7 +207,6 @@ class AddFlightsPageState extends State<AddFlightsPage> {
             ],
           )
       );
-
     } else {
       // create an airplane with user inputs
       var flight = Flight(
@@ -192,9 +214,9 @@ class AddFlightsPageState extends State<AddFlightsPage> {
           departureController.value.text, arrivalTimeController.value.text,
           departureTimeController.value.text
       );
-
       // add flight to database
       flightDao.insertFlight(flight);
+      // Save shared preferences so that the most recently added flight is loaded
       saveSharedPreferences();
       clearUserInputs();
       alertUserOfSuccessfulInsert();
@@ -205,7 +227,7 @@ class AddFlightsPageState extends State<AddFlightsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add airplane"),
+        title: Text("Add Flight"),
       ),
       body: Center(
           child:
@@ -213,40 +235,46 @@ class AddFlightsPageState extends State<AddFlightsPage> {
             child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
+              Padding(padding: EdgeInsets.fromLTRB(4, 8, 4, 8),
+              child: TextField(
                 controller: departureController,
                 decoration: InputDecoration(
                   hintText: "Enter Departure City:",
                   border: OutlineInputBorder(),
                 ),
-              ),
+              )),
+          Padding(padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
+            child:
               TextField(
                 controller: destinationController,
                 decoration: InputDecoration(
                   hintText: "Enter Destination City: ",
                   border: OutlineInputBorder(),
                 ),
-              ),
-              TextField(
+              )),
+          Padding(padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
+            child: TextField(
                 controller: departureTimeController,
                 decoration: InputDecoration(
                   hintText: "Enter Departure Time (24HR): ",
                   border: OutlineInputBorder(),
                 ),
-              ),
-              TextField(
+              )),
+            Padding(padding: EdgeInsets.fromLTRB(4, 4, 4, 8),
+            child:  TextField(
                 controller: arrivalTimeController,
                 decoration: InputDecoration(
                   hintText: "Enter Arrival Time (24HR): ",
                   border: OutlineInputBorder(),
                 ),
-              ),
+              )),
               ElevatedButton(
                   onPressed: createNewFlight,
                   child: Text("Add new flight route to database")),
-              ElevatedButton(
+          Padding(padding: EdgeInsets.fromLTRB(4, 8, 4, 8),
+            child: ElevatedButton(
                   onPressed: clearUserInputs,
-                  child: Text("Clear form")),
+                  child: Text("Clear form"))),
             ],
           )
       ),
