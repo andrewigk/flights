@@ -4,6 +4,7 @@ import 'package:floor/floor.dart';
 @Entity(tableName: 'flights')
 class Flight {
 
+  /** static ID used logically */
   static int ID = 1;
 
   @primaryKey
@@ -13,6 +14,9 @@ class Flight {
   String departureTime;
   String arrivalTime;
 
+  /** Constructor for Flight includes conditional logic to avoid
+   * potential primary key issues
+   */
   Flight(this.flightId, this.destinationCity, this.departureCity,
       this.departureTime, this.arrivalTime){
       if(flightId >= ID) {
@@ -20,14 +24,4 @@ class Flight {
     }
   }
 
-  Map<String, dynamic> toMap() { // MAKE SURE THESE keys MATCH SQL TABLE NAMES!!!!!
-    return {
-      'flightId': flightId,
-      'destinationCity': destinationCity,
-      'departureCity': departureCity,
-      'departureTime': departureTime,
-      'arrivalTime': arrivalTime
-    };
-
-  }
 }
