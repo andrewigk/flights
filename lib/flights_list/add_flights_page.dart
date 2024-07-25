@@ -80,7 +80,8 @@ class AddFlightsPageState extends State<AddFlightsPage> {
    */
   void closeAlertDialog() {
     Navigator.pop(context);
-    Navigator.pushNamed(context, "/flightsPage");
+    Navigator.pop(context);
+    //Navigator.pushNamed(context, "/flightsPage");
   }
 
   /** Clears user inputs in the text fields when called.
