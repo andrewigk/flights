@@ -7,18 +7,7 @@ import 'package:flutter/material.dart';
 import 'airplane.dart';
 import 'airplane_details_page.dart';
 
-/*
-* CRITERIA FOR AIRPLANES PAGE:
-* - Listview displaying all planes
-* - button to add plane -> add new plane form (submit/insert new plane button)
-*     -> adding plane has shared preferences, displaying previously entered plane details
-* - click on plane -> details form (with update, delete buttons)
-*   -> populate form with current airplane details
-* */
 
-// TODO: make pretty
-// TODO: language support...?
-// TODO: Tablet vs phone display
 
 class AirplanesPage extends StatefulWidget {
   final ApplicationDatabase database;
@@ -31,6 +20,36 @@ class AirplanesPage extends StatefulWidget {
 
 class AirplanesPageState extends State<AirplanesPage> {
   AirplanesPageState({required this.database});
+
+  final canadianEnglishLocale = Locale("en", "ca");
+  final americanEnglishLocale = Locale("en", "us");
+  final canadianEnglishString = "CA English";
+  final americanEnglishString = "US English";
+  String currentLanguage = "ca";
+
+
+  void switchLanguage() {
+
+    setState(() {
+      if (currentLanguage == "ca") {
+        currentLanguage = "us";
+      } else if (currentLanguage == "us") {
+        currentLanguage = "ca";
+      }
+    });
+  }
+
+  String getCurrentLanguage() {
+    if (currentLanguage == "ca") {
+      return canadianEnglishString;
+    }
+
+    if (currentLanguage == "us") {
+      return americanEnglishString;
+    }
+
+    return "English";
+  }
 
   late ApplicationDatabase database;
 
@@ -108,7 +127,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Check if the screen is wide enough to display both pages side by side
         if (constraints.maxWidth > constraints.maxHeight &&
             constraints.maxWidth > 720) {
           return _buildSideBySideView();
@@ -120,7 +138,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   }
 
   Widget _buildSideBySideView() {
-    // Display AirplanesPage and AirplaneDetailsPage side by side
     return Scaffold(
       appBar: AppBar(
         title: Text("Airplanes page"),
@@ -134,6 +151,10 @@ class AirplanesPageState extends State<AirplanesPage> {
                 ElevatedButton(
                   onPressed: navigateToAddAirplanePage,
                   child: Text("Add new airplane"),
+                ),
+                ElevatedButton(
+                  onPressed: switchLanguage,
+                  child: Text("Switch language, current language: ${getCurrentLanguage()}"),
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -174,7 +195,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   }
 
   Widget _buildSingleView() {
-    // Display the original AirplanesPage
     return Scaffold(
       appBar: AppBar(
         title: Text("Airplanes page"),
@@ -186,6 +206,10 @@ class AirplanesPageState extends State<AirplanesPage> {
             ElevatedButton(
               onPressed: navigateToAddAirplanePage,
               child: Text("Add new airplane"),
+            ),
+            ElevatedButton(
+              onPressed: switchLanguage,
+              child: Text("Switch language, current language: ${getCurrentLanguage()}"),
             ),
             Expanded(
               child: ListView.builder(
