@@ -7,17 +7,6 @@ import 'package:flutter/material.dart';
 import 'airplane.dart';
 import 'airplane_details_page.dart';
 
-/*
-* CRITERIA FOR AIRPLANES PAGE:
-* - Listview displaying all planes
-* - button to add plane -> add new plane form (submit/insert new plane button)
-*     -> adding plane has shared preferences, displaying previously entered plane details
-* - click on plane -> details form (with update, delete buttons)
-*   -> populate form with current airplane details
-* */
-
-// TODO: make pretty
-// TODO: language support...?
 
 
 class AirplanesPage extends StatefulWidget {
@@ -31,6 +20,36 @@ class AirplanesPage extends StatefulWidget {
 
 class AirplanesPageState extends State<AirplanesPage> {
   AirplanesPageState({required this.database});
+
+  final canadianEnglishLocale = Locale("en", "ca");
+  final americanEnglishLocale = Locale("en", "us");
+  final canadianEnglishString = "CA English";
+  final americanEnglishString = "US English";
+  String currentLanguage = "ca";
+
+
+  void switchLanguage() {
+
+    setState(() {
+      if (currentLanguage == "ca") {
+        currentLanguage = "us";
+      } else if (currentLanguage == "us") {
+        currentLanguage = "ca";
+      }
+    });
+  }
+
+  String getCurrentLanguage() {
+    if (currentLanguage == "ca") {
+      return canadianEnglishString;
+    }
+
+    if (currentLanguage == "us") {
+      return americanEnglishString;
+    }
+
+    return "English";
+  }
 
   late ApplicationDatabase database;
 
@@ -133,6 +152,10 @@ class AirplanesPageState extends State<AirplanesPage> {
                   onPressed: navigateToAddAirplanePage,
                   child: Text("Add new airplane"),
                 ),
+                ElevatedButton(
+                  onPressed: switchLanguage,
+                  child: Text("Switch language, current language: ${getCurrentLanguage()}"),
+                ),
                 Expanded(
                   child: ListView.builder(
                     itemCount: airplanes.length,
@@ -183,6 +206,10 @@ class AirplanesPageState extends State<AirplanesPage> {
             ElevatedButton(
               onPressed: navigateToAddAirplanePage,
               child: Text("Add new airplane"),
+            ),
+            ElevatedButton(
+              onPressed: switchLanguage,
+              child: Text("Switch language, current language: ${getCurrentLanguage()}"),
             ),
             Expanded(
               child: ListView.builder(
