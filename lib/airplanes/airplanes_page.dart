@@ -18,7 +18,7 @@ import 'airplane_details_page.dart';
 
 // TODO: make pretty
 // TODO: language support...?
-// TODO: Tablet vs phone display
+
 
 class AirplanesPage extends StatefulWidget {
   final ApplicationDatabase database;
@@ -108,7 +108,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Check if the screen is wide enough to display both pages side by side
         if (constraints.maxWidth > constraints.maxHeight &&
             constraints.maxWidth > 720) {
           return _buildSideBySideView();
@@ -120,7 +119,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   }
 
   Widget _buildSideBySideView() {
-    // Display AirplanesPage and AirplaneDetailsPage side by side
     return Scaffold(
       appBar: AppBar(
         title: Text("Airplanes page"),
@@ -174,7 +172,6 @@ class AirplanesPageState extends State<AirplanesPage> {
   }
 
   Widget _buildSingleView() {
-    // Display the original AirplanesPage
     return Scaffold(
       appBar: AppBar(
         title: Text("Airplanes page"),
