@@ -1,6 +1,10 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 
+import 'customer.dart';
+
 class CustomerRepository {
+  static Customer? selectedCustomer;
+
   static String firstName = "";
   static String lastName = "";
   static String address = "";

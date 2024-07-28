@@ -20,9 +20,10 @@ class CustomerAdd extends StatefulWidget {
 
 
 class CustomerAddState extends State<CustomerAdd> {
-  CustomerAddState({required this.customerDao});
+  CustomerAddState({required this.customerDao, this.customer});
 
   late CustomerDao customerDao;
+  final Customer? customer;
 
 
   late TextEditingController _firstName;
@@ -45,14 +46,14 @@ class CustomerAddState extends State<CustomerAdd> {
       _birthday.text = widget.customer!.birthday;
     }
 
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Add a new customer'),
-            duration: Duration(seconds: 5),
-          )
-      );
-    });
+    // WidgetsBinding.instance?.addPostFrameCallback((_) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Text('Add a new customer'),
+    //         duration: Duration(seconds: 5),
+    //       )
+    //   );
+    // });
   }
 
   @override
@@ -121,12 +122,51 @@ class CustomerAddState extends State<CustomerAdd> {
       var customer = Customer(Customer.cID, _firstName.value.text,
           _lastName.value.text, _address.value.text, _birthday.value.text);
 
-      customerDao.insertCustomer(customer);
+      customerDao.insertCustomer(customer).then((_) {
+        Navigator.pushNamed(context,  "/customersPage");
+      });
 
       clearUserInputs();
 
     }
   }
+
+  void updateCustomer() {
+    if (!validateUserInputsCustomer()) {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Invalid input"),
+          content: const Text("At least one of your inputs was left empty."),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () { Navigator.pop(context); },
+              child: Text("Ok"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      var updatedCustomer = Customer(
+        widget.customer!.customerId,
+        _firstName.text,
+        _lastName.text,
+        _address.text,
+        _birthday.text,
+      );
+      customerDao.updateCustomer(updatedCustomer).then((_) {
+        Navigator.pushNamed(context, '/customersPage');
+      });
+      }
+      }
+
+  void deleteCustomer() {
+      customerDao.deleteCustomer(widget.customer!).then((_) {
+        Navigator.pushNamed(context, '/customersPage');
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -135,7 +175,7 @@ class CustomerAddState extends State<CustomerAdd> {
             child: Column (
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("Add a New Customer", style: TextStyle(fontSize: 30)),
+                Text("Customer Details", style: TextStyle(fontSize: 30)),
                 Container(
                     width: 500,
                     child: TextField(
@@ -176,10 +216,23 @@ class CustomerAddState extends State<CustomerAdd> {
                         )
                     )
                 ),
+
                 OutlinedButton(child:
                 Text("Save New Customer"),
                     onPressed: (){
                       addNewCustomer();
+                    }
+                ),
+                OutlinedButton(child:
+                Text("Update Customer"),
+                    onPressed: (){
+                      updateCustomer();
+                    }
+                ),
+                OutlinedButton(child:
+                Text("Delete Customer"),
+                    onPressed: (){
+                      deleteCustomer();
                     }
                 ),
                 ElevatedButton(child:

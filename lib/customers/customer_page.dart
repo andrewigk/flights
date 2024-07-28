@@ -47,6 +47,11 @@ class CustomerState extends State<CustomerPage> {
     super.dispose();
   }
 
+  void navigateToAddPage(BuildContext context, Customer customer) {
+    CustomerRepository.selectedCustomer = customer;
+    Navigator.pushNamed(context, "/customerAddPage");
+  }
+
   Widget CustomerList(BuildContext context) {
     return Center(
       child: Column(
@@ -106,6 +111,28 @@ class CustomerState extends State<CustomerPage> {
                             // await prefs.setString('selectedCustomerId', selectedCustomer!.customerId.toString());
 
                           },
+                          onLongPress: () {
+                            showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('Delete Item'),
+                                  content: const Text('Do you want to delete the item?'),
+                                  actions: <Widget>[
+                              // Yes button deletes object and closes alert dialog
+                              ElevatedButton(
+                              child: Text("Yes"),
+                              onPressed: () {
+                                setState(() {
+                                  var itm = listCustomers[rowNumber];
+                                  // deletes item from database
+                                  customerDao.deleteCustomer(itm);
+                                  // removes from listObjects array
+                                  listCustomers.removeAt(rowNumber);
+                                  Navigator.pop(context);
+                                });
+                              },
+                            )
+                          ]));},
                         );
                       },
                     ),
@@ -140,6 +167,7 @@ class CustomerState extends State<CustomerPage> {
             ElevatedButton(
                 child: Text("Update or Delete"),
                 onPressed: () {
+
                   Navigator.push(
                     context,
                     MaterialPageRoute(
