@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../database.dart';
 import 'customer.dart';
 import 'customer_dao.dart';
 
@@ -7,56 +8,143 @@ import 'customer_dao.dart';
 class CustomerPage extends StatefulWidget {
   // const CustomerPage({super.key, required this.title});
   // final String title;
+  final ApplicationDatabase database;
+
+  CustomerPage({required this.database});
 
   @override
-  State<StatefulWidget> createState() {
-    return CustomerState();
-  }
+  State<CustomerPage> createState() => CustomerState(customerDao: database.customerDao, database: database);
 }
 
 class CustomerState extends State<CustomerPage> {
-  late TextEditingController _controller;
-  var listCustomers = <Customer>[];
-  late CustomerDao customerDAO;
+
+  CustomerState({required this.customerDao, required this.database});
+
+  late CustomerDao customerDao;
+  late ApplicationDatabase database;
+
+  List <Customer> listCustomers = [];
+
+
+  Customer? selectedCustomer = null;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController();
+    customerDao = database.customerDao;
+    customerDao.getAllCustomers().then((allCustomersList) {
+      setState(() {
+        listCustomers.addAll(allCustomersList);
+      });
+    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
     super.dispose();
   }
 
-  Widget CustomerList() {
+  Widget CustomerList(BuildContext context) {
     return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Customer List', style: TextStyle(fontSize: 30)),
-          ElevatedButton(child: Text('Add Customer'),
-              onPressed: () {
-                Navigator.pushNamed(context, "/addCustomersPage");
-              })
+          ElevatedButton(
+            child: Text('Add Customer'),
+            onPressed: () {
+              Navigator.pushNamed(context, "/addCustomersPage");
+            },
+          ),
+          if (listCustomers.isEmpty)
+            Text("There are no entries in the customer list.")
+          else
+            Expanded(
+              child: Column(
+                children: [
+                  // Header row
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text(
+                          'First Name',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'Last Name',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // List of customers
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: listCustomers.length,
+                      itemBuilder: (context, rowNumber) {
+                        return GestureDetector(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(listCustomers[rowNumber].firstName),
+                                Text(listCustomers[rowNumber].lastName),
+                              ],
+                            ),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              selectedCustomer = listCustomers[rowNumber];
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
   }
 
+
   Widget DetailsPage() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const Text(
-            'Details',
-          ),
-        ],
-      ),
-    );
+    if (selectedCustomer == null) {
+      return Center(
+        child: Text("Select a customer to see the details."),
+      );
+    } else {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'Details',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text("First Name: ${selectedCustomer!.firstName}"),
+            Text("Last Name: ${selectedCustomer!.lastName}"),
+            Text("Address: ${selectedCustomer!.address}"),
+            Text("Birthday: ${selectedCustomer!.birthday}"),
+            ElevatedButton(
+                child: Text("Update or Delete"),
+                onPressed: () {
+                  Navigator.pushNamed(context, "/addCustomersPage");
+                }
+            ),
+            ElevatedButton(
+              child: Text("Go Back."),
+              onPressed: () {
+                Navigator.pushNamed(context, "/customersPage");
+              }
+            )
+          ],
+        ),
+      );
+    }
   }
 
   Widget responsiveLayout() {
@@ -66,11 +154,14 @@ class CustomerState extends State<CustomerPage> {
 
     if ((width > height) && (width > 720)) {
       return Row(children: [
-        Expanded(flex:1, child: CustomerList()),
+        Expanded(flex:1, child: CustomerList(context)),
         Expanded(flex:1, child: DetailsPage())
       ]);
     } else {
-      return CustomerList();
+      if (selectedCustomer == null)
+        return CustomerList(context);
+      else
+        return DetailsPage();
     }
   }
 
@@ -82,6 +173,7 @@ class CustomerState extends State<CustomerPage> {
           // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
           // change color while the other colors stay the same.
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("Customer List")
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           // title: Text(widget.title),

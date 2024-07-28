@@ -9,7 +9,7 @@ abstract class CustomerDao {
   Future<List<Customer>> getAllCustomers();
 
   @Query("SELECT * FROM customers WHERE id = :id")
-  Stream<Customer?> getAirplaneById(int id);
+  Stream<Customer?> getCustomerById(int id);
 
   @insert
   Future<void> insertCustomer(Customer customer);

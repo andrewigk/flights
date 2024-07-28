@@ -384,7 +384,7 @@ class _$CustomerDao extends CustomerDao {
   }
 
   @override
-  Stream<Customer?> getAirplaneById(int id) {
+  Stream<Customer?> getCustomerById(int id) {
     return _queryAdapter.queryStream('SELECT * FROM customers WHERE id = ?1',
         mapper: (Map<String, Object?> row) => Customer(
             row['customerId'] as int,
