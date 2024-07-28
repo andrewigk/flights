@@ -1,4 +1,5 @@
 import 'package:cst2335_final_project/customers/customer.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -9,8 +10,9 @@ import 'customer_repository.dart';
 // Page to add customers.
 class CustomerAdd extends StatefulWidget {
   final ApplicationDatabase database;
+  final Customer? customer;
 
-  CustomerAdd({required this.database}); // take the database from main
+  CustomerAdd({required this.database, this.customer}); // take the database from main
 
   @override
   State<CustomerAdd> createState() => CustomerAddState(customerDao: database.customerDao);
@@ -36,18 +38,26 @@ class CustomerAddState extends State<CustomerAdd> {
     _address = TextEditingController();
     _birthday = TextEditingController();
 
-    CustomerRepository.loadData().then((_) {
-      setState(() {
-        _firstName.text = CustomerRepository.firstName;
-        _lastName.text = CustomerRepository.lastName;
-        _address.text = CustomerRepository.address;
-        _birthday.text = CustomerRepository.birthday;
-      });
+    if (widget.customer != null) {
+      _firstName.text = widget.customer!.firstName;
+      _lastName.text = widget.customer!.lastName;
+      _address.text = widget.customer!.address;
+      _birthday.text = widget.customer!.birthday;
+    }
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Add a new customer'),
+            duration: Duration(seconds: 5),
+          )
+      );
     });
   }
 
   @override
   void dispose() {
+    saveCustomerData();
     _firstName.dispose();
     _lastName.dispose();
     _address.dispose();
@@ -85,6 +95,13 @@ class CustomerAddState extends State<CustomerAdd> {
     });
   }
 
+  void saveCustomerData() async {
+    CustomerRepository.firstName = _firstName.text;
+    CustomerRepository.lastName = _lastName.text;
+    CustomerRepository.address = _address.text;
+    CustomerRepository.birthday = _birthday.text;
+    CustomerRepository.saveData();
+  }
 
   void addNewCustomer() {
     if (!validateUserInputsCustomer()) {
@@ -105,6 +122,7 @@ class CustomerAddState extends State<CustomerAdd> {
           _lastName.value.text, _address.value.text, _birthday.value.text);
 
       customerDao.insertCustomer(customer);
+
       clearUserInputs();
 
     }

@@ -1,8 +1,11 @@
+import 'package:cst2335_final_project/customers/customer_repository.dart';
+import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../database.dart';
 import 'customer.dart';
 import 'customer_dao.dart';
+import 'customer_add.dart';
 
 
 class CustomerPage extends StatefulWidget {
@@ -93,10 +96,15 @@ class CustomerState extends State<CustomerPage> {
                               ],
                             ),
                           ),
-                          onTap: () {
+                          onTap: () async {
+
                             setState(() {
                               selectedCustomer = listCustomers[rowNumber];
+
                             });
+                            // EncryptedSharedPreferences prefs = EncryptedSharedPreferences();
+                            // await prefs.setString('selectedCustomerId', selectedCustomer!.customerId.toString());
+
                           },
                         );
                       },
@@ -132,7 +140,22 @@ class CustomerState extends State<CustomerPage> {
             ElevatedButton(
                 child: Text("Update or Delete"),
                 onPressed: () {
-                  Navigator.pushNamed(context, "/addCustomersPage");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CustomerAdd(
+                        database:database,
+                        customer: selectedCustomer
+                      )
+                    )
+                  );
+                  // CustomerRepository.firstName = selectedCustomer!.firstName;
+                  // CustomerRepository.lastName = selectedCustomer!.lastName;
+                  // CustomerRepository.address = selectedCustomer!.address;
+                  // CustomerRepository.birthday = selectedCustomer!.birthday;
+                  // CustomerRepository.saveData();
+                  // Navigator.pushNamed(context, "/addCustomersPage");
+
                 }
             ),
             ElevatedButton(
