@@ -7,14 +7,18 @@ import 'package:sqflite/sqflite.dart' as sqflite;
 import 'flights_list/flights.dart';
 import 'flights_list/flights_dao.dart';
 
+import 'reservation/reservations.dart';
+import 'reservation/reservations_dao.dart';
+
 
 part 'database.g.dart';
 
-@Database(version: 1, entities: [Airplane, Flight])
+@Database(version: 1, entities: [Airplane, Flight, Reservations])
 abstract class ApplicationDatabase extends FloorDatabase {
 
   // all of our entities will be a table in the same app database (this one)
 
   AirplaneDao get airplaneDao;
   FlightDao get flightDao;
+  ReservationsDao get reservationsDao;
 }

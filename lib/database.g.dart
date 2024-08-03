@@ -78,6 +78,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
 
   FlightDao? _flightDaoInstance;
 
+  ReservationsDao? _reservationsDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -103,6 +105,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
             'CREATE TABLE IF NOT EXISTS `airplanes` (`airplaneId` INTEGER, `airplaneType` TEXT NOT NULL, `numberOfPassengers` INTEGER NOT NULL, `maxSpeed` INTEGER NOT NULL, `range` INTEGER NOT NULL, PRIMARY KEY (`airplaneId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `flights` (`flightId` INTEGER NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`flightId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `reservations` (`reservationId` INTEGER NOT NULL, `reservationTitle` TEXT NOT NULL, `customerName` TEXT NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`reservationId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -118,6 +122,12 @@ class _$ApplicationDatabase extends ApplicationDatabase {
   @override
   FlightDao get flightDao {
     return _flightDaoInstance ??= _$FlightDao(database, changeListener);
+  }
+
+  @override
+  ReservationsDao get reservationsDao {
+    return _reservationsDaoInstance ??=
+        _$ReservationsDao(database, changeListener);
   }
 }
 
@@ -307,5 +317,71 @@ class _$FlightDao extends FlightDao {
   @override
   Future<int> deleteFlight(Flight flight) {
     return _flightDeletionAdapter.deleteAndReturnChangedRows(flight);
+  }
+}
+
+class _$ReservationsDao extends ReservationsDao {
+  _$ReservationsDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database),
+        _reservationsInsertionAdapter = InsertionAdapter(
+            database,
+            'reservations',
+            (Reservations item) => <String, Object?>{
+                  'reservationId': item.reservationId,
+                  'reservationTitle': item.reservationTitle,
+                  'customerName': item.customerName,
+                  'destinationCity': item.destinationCity,
+                  'departureCity': item.departureCity,
+                  'departureTime': item.departureTime,
+                  'arrivalTime': item.arrivalTime
+                }),
+        _reservationsDeletionAdapter = DeletionAdapter(
+            database,
+            'reservations',
+            ['reservationId'],
+            (Reservations item) => <String, Object?>{
+                  'reservationId': item.reservationId,
+                  'reservationTitle': item.reservationTitle,
+                  'customerName': item.customerName,
+                  'destinationCity': item.destinationCity,
+                  'departureCity': item.departureCity,
+                  'departureTime': item.departureTime,
+                  'arrivalTime': item.arrivalTime
+                });
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Reservations> _reservationsInsertionAdapter;
+
+  final DeletionAdapter<Reservations> _reservationsDeletionAdapter;
+
+  @override
+  Future<List<Reservations>> findAllReservations() async {
+    return _queryAdapter.queryList('SELECT * FROM Reservations',
+        mapper: (Map<String, Object?> row) => Reservations(
+            row['reservationId'] as int,
+            row['reservationTitle'] as String,
+            row['customerName'] as String,
+            row['destinationCity'] as String,
+            row['departureCity'] as String,
+            row['departureTime'] as String,
+            row['arrivalTime'] as String));
+  }
+
+  @override
+  Future<void> insertReservations(Reservations reservations) async {
+    await _reservationsInsertionAdapter.insert(
+        reservations, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteReservations(Reservations reservations) async {
+    await _reservationsDeletionAdapter.delete(reservations);
   }
 }
