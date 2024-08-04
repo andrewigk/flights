@@ -1,5 +1,6 @@
 import 'package:floor/floor.dart';
 
+/// This class is the floor database entity to store customer information.
 @Entity(tableName: 'customers')
 class Customer {
   static int cID = 1;
@@ -11,20 +12,9 @@ class Customer {
   String address;
   String birthday;
 
-
+  // Customer constructor
   Customer(this.customerId, this.firstName, this.lastName, this.address, this.birthday) {
-    if(customerId>=cID) // from database
-      cID = customerId + 1; // ID will always be 1 more than biggest id in database.
-  }
-
-  Map<String, dynamic> toMap() {
-    // MAKE SURE THESE keys MATCH SQL TABLE NAMES!!!!!
-    return {
-      'customerId': customerId,
-      'firstName': firstName,
-      'lastName': lastName,
-      'address': address,
-      'birthday': birthday
-    };
+    if(customerId>=cID) // From database
+      cID = customerId + 1; // ID will always be 1 more than biggest ID in database.
   }
 }
