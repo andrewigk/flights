@@ -1,24 +1,29 @@
 import 'package:floor/floor.dart';
 
 @Entity(tableName: 'reservations')
-class Reservations {
+class Reservation {
 
-  // ID used logically */
   static int rID = 1;
 
   @primaryKey
   final int reservationId;
   final String reservationTitle;
   String customerName;
-  String destinationCity;
   String departureCity;
+  String destinationCity;
   String departureTime;
   String arrivalTime;
 
-  Reservations(this.reservationId, this.reservationTitle, this.customerName,
-      this.destinationCity, this.departureCity,
-      this.departureTime, this.arrivalTime){
-    if(reservationId >= rID) {
+  Reservation(
+      this.reservationId,
+      this.reservationTitle,
+      this.customerName,
+      this.departureCity,
+      this.destinationCity,
+      this.departureTime,
+      this.arrivalTime,
+      ) {
+    if (reservationId >= rID) {
       rID = reservationId + 1;
     }
   }

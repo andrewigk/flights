@@ -5,6 +5,7 @@ import 'package:cst2335_final_project/flights_list/add_flights_page.dart';
 import 'package:cst2335_final_project/flights_list/flights_page.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:cst2335_final_project/reservation/reservations_page.dart';
+import 'package:cst2335_final_project/reservation/add_reservations_page.dart';
 import 'package:flutter/material.dart';
 import 'database.dart';
 
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/addFlightsPage' : (context) => AddFlightsPage(database: database),
         '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
         '/reservationsPage' : (context) => ReservationsPage(database: database),
-     //   '/addReservationsPage' : (context) => AddReservationsPage(database: database),
+        '/addReservationsPage' : (context) => AddReservationsPage(database: database),
 
         // ^^^^^^you guys can add your routes to pages here
         // IMPORTANT: MAKE SURE TO PASS THE DATABASE AND PREFERENCES TO YOUR PAGES AS PARAMETER (IF YOU NEED THEM)
