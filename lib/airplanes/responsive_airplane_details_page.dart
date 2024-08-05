@@ -6,18 +6,18 @@ import '../database.dart';
 import 'airplane.dart';
 import 'airplane_dao.dart';
 
-class AirplaneDetailsPage extends StatefulWidget {
+class ResponsiveAirplaneDetailsPage extends StatefulWidget {
   final ApplicationDatabase database;
 
-  AirplaneDetailsPage({required this.database});
+  ResponsiveAirplaneDetailsPage({required this.database});
 
   @override
-  State<AirplaneDetailsPage> createState() => AirplaneDetailsPageState(airplaneDao: database.airplaneDao);
+  State<ResponsiveAirplaneDetailsPage> createState() => ResponsiveAirplaneDetailsPageState(airplaneDao: database.airplaneDao);
 }
 
-class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
+class ResponsiveAirplaneDetailsPageState extends State<ResponsiveAirplaneDetailsPage> {
 
-  AirplaneDetailsPageState({required this.airplaneDao});
+  ResponsiveAirplaneDetailsPageState({required this.airplaneDao});
 
   final AirplaneDao airplaneDao;
   final originalAirplane = AirplaneRepository.selectedAirplane;
@@ -74,9 +74,8 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
   void closeAlertDialog() {
     Navigator.pop(context); // close alert
-    Navigator.pop(context); // go back to airplanes page
-    Navigator.pop(context); // go all the way home
-    Navigator.pushNamed(context, "/airplanesPage"); // back to airplanes page
+    Navigator.pop(context); // go home
+    Navigator.pushNamed(context, "/airplanesPage"); 
   }
 
   void clearUserInputs(){
@@ -158,7 +157,7 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
     } else {
       // create an airplane with user inputs
       Airplane airplane = Airplane(
-        airplaneId: originalAirplane?.airplaneId,
+          airplaneId: originalAirplane?.airplaneId,
           airplaneType: airplaneTypeUserInput,
           numberOfPassengers: int.parse(numberOfPassengerUserInput),
           maxSpeed: int.parse(maxSpeedUserInput),
@@ -167,25 +166,24 @@ class AirplaneDetailsPageState extends State<AirplaneDetailsPage> {
 
       // add airplane to database
       updateAirplaneToDatabase(airplane);
+      AirplaneRepository.selectedAirplane = null;
       clearUserInputs();
       alertUserOfSuccessfulInsert();
     }
   }
 
   void deleteAirplane() {
-      // add airplane to database
+    // add airplane to database
     deleteAirplaneFromDatabase(originalAirplane!);
     clearUserInputs();
+    AirplaneRepository.selectedAirplane = null;
     alertUserOfSuccessfulInsert();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Add airplane"),
-      ),
-      body: Center(
+        body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
