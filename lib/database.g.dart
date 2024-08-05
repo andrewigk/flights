@@ -78,7 +78,7 @@ class _$ApplicationDatabase extends ApplicationDatabase {
 
   FlightDao? _flightDaoInstance;
 
-  ReservationDao? _reservationDaoInstance;
+  CustomerDao? _customerDaoInstance;
 
   Future<sqflite.Database> open(
     String path,
@@ -106,7 +106,7 @@ class _$ApplicationDatabase extends ApplicationDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `flights` (`flightId` INTEGER NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`flightId`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `reservations` (`reservationId` INTEGER NOT NULL, `reservationTitle` TEXT NOT NULL, `customerName` TEXT NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`reservationId`))');
+            'CREATE TABLE IF NOT EXISTS `customers` (`customerId` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `address` TEXT NOT NULL, `birthday` TEXT NOT NULL, PRIMARY KEY (`customerId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -125,9 +125,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
   }
 
   @override
-  ReservationDao get reservationDao {
-    return _reservationDaoInstance ??=
-        _$ReservationDao(database, changeListener);
+  CustomerDao get customerDao {
+    return _customerDaoInstance ??= _$CustomerDao(database, changeListener);
   }
 }
 
@@ -320,50 +319,44 @@ class _$FlightDao extends FlightDao {
   }
 }
 
-class _$ReservationDao extends ReservationDao {
-  _$ReservationDao(
+class _$CustomerDao extends CustomerDao {
+  _$CustomerDao(
     this.database,
     this.changeListener,
   )   : _queryAdapter = QueryAdapter(database, changeListener),
-        _reservationInsertionAdapter = InsertionAdapter(
+        _customerInsertionAdapter = InsertionAdapter(
             database,
-            'reservations',
-            (Reservation item) => <String, Object?>{
-                  'reservationId': item.reservationId,
-                  'reservationTitle': item.reservationTitle,
-                  'customerName': item.customerName,
-                  'destinationCity': item.destinationCity,
-                  'departureCity': item.departureCity,
-                  'departureTime': item.departureTime,
-                  'arrivalTime': item.arrivalTime
+            'customers',
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
                 },
             changeListener),
-        _reservationUpdateAdapter = UpdateAdapter(
+        _customerUpdateAdapter = UpdateAdapter(
             database,
-            'reservations',
-            ['reservationId'],
-            (Reservation item) => <String, Object?>{
-                  'reservationId': item.reservationId,
-                  'reservationTitle': item.reservationTitle,
-                  'customerName': item.customerName,
-                  'destinationCity': item.destinationCity,
-                  'departureCity': item.departureCity,
-                  'departureTime': item.departureTime,
-                  'arrivalTime': item.arrivalTime
+            'customers',
+            ['customerId'],
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
                 },
             changeListener),
-        _reservationDeletionAdapter = DeletionAdapter(
+        _customerDeletionAdapter = DeletionAdapter(
             database,
-            'reservations',
-            ['reservationId'],
-            (Reservation item) => <String, Object?>{
-                  'reservationId': item.reservationId,
-                  'reservationTitle': item.reservationTitle,
-                  'customerName': item.customerName,
-                  'destinationCity': item.destinationCity,
-                  'departureCity': item.departureCity,
-                  'departureTime': item.departureTime,
-                  'arrivalTime': item.arrivalTime
+            'customers',
+            ['customerId'],
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
                 },
             changeListener);
 
@@ -373,55 +366,49 @@ class _$ReservationDao extends ReservationDao {
 
   final QueryAdapter _queryAdapter;
 
-  final InsertionAdapter<Reservation> _reservationInsertionAdapter;
+  final InsertionAdapter<Customer> _customerInsertionAdapter;
 
-  final UpdateAdapter<Reservation> _reservationUpdateAdapter;
+  final UpdateAdapter<Customer> _customerUpdateAdapter;
 
-  final DeletionAdapter<Reservation> _reservationDeletionAdapter;
+  final DeletionAdapter<Customer> _customerDeletionAdapter;
 
   @override
-  Future<List<Reservation>> getAllReservations() async {
-    return _queryAdapter.queryList('SELECT * FROM reservations',
-        mapper: (Map<String, Object?> row) => Reservation(
-            row['reservationId'] as int,
-            row['reservationTitle'] as String,
-            row['customerName'] as String,
-            row['destinationCity'] as String,
-            row['departureCity'] as String,
-            row['departureTime'] as String,
-            row['arrivalTime'] as String));
+  Future<List<Customer>> getAllCustomers() async {
+    return _queryAdapter.queryList('SELECT * FROM customers',
+        mapper: (Map<String, Object?> row) => Customer(
+            row['customerId'] as int,
+            row['firstName'] as String,
+            row['lastName'] as String,
+            row['address'] as String,
+            row['birthday'] as String));
   }
 
   @override
-  Stream<Reservation?> getReservationById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM reservations WHERE id = ?1',
-        mapper: (Map<String, Object?> row) => Reservation(
-            row['reservationId'] as int,
-            row['reservationTitle'] as String,
-            row['customerName'] as String,
-            row['destinationCity'] as String,
-            row['departureCity'] as String,
-            row['departureTime'] as String,
-            row['arrivalTime'] as String),
+  Stream<Customer?> getCustomerById(int id) {
+    return _queryAdapter.queryStream('SELECT * FROM customers WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Customer(
+            row['customerId'] as int,
+            row['firstName'] as String,
+            row['lastName'] as String,
+            row['address'] as String,
+            row['birthday'] as String),
         arguments: [id],
-        queryableName: 'reservations',
+        queryableName: 'customers',
         isView: false);
   }
 
   @override
-  Future<void> insertReservation(Reservation reservation) async {
-    await _reservationInsertionAdapter.insert(
-        reservation, OnConflictStrategy.abort);
+  Future<void> insertCustomer(Customer customer) async {
+    await _customerInsertionAdapter.insert(customer, OnConflictStrategy.abort);
   }
 
   @override
-  Future<int> updateReservation(Reservation reservation) {
-    return _reservationUpdateAdapter.updateAndReturnChangedRows(
-        reservation, OnConflictStrategy.abort);
+  Future<void> updateCustomer(Customer customer) async {
+    await _customerUpdateAdapter.update(customer, OnConflictStrategy.abort);
   }
 
   @override
-  Future<int> deleteReservation(Reservation reservation) {
-    return _reservationDeletionAdapter.deleteAndReturnChangedRows(reservation);
+  Future<void> deleteCustomer(Customer customer) async {
+    await _customerDeletionAdapter.delete(customer);
   }
 }

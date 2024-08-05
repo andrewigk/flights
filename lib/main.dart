@@ -2,12 +2,12 @@ import 'package:cst2335_final_project/airplanes/add_airplane_page.dart';
 import 'package:cst2335_final_project/airplanes/airplane_details_page.dart';
 import 'package:cst2335_final_project/airplanes/airplanes_page.dart';
 import 'package:cst2335_final_project/flights_list/add_flights_page.dart';
-import 'package:cst2335_final_project/flights_list/flights_page.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
-import 'package:cst2335_final_project/reservation/reservations_page.dart';
-import 'package:cst2335_final_project/reservation/add_reservations_page.dart';
 import 'package:flutter/material.dart';
+import 'customers/customer_add.dart';
+import 'customers/customer_page.dart';
 import 'database.dart';
+import 'flights_list/flights_page.dart';
 
 void main() async { // DO NOT MODIFY THIS CODE!!!!!!!!!!!!
   // WE ARE ALL USING THE SAME SHARED DATABASE
@@ -37,8 +37,9 @@ class MyApp extends StatelessWidget {
         '/flightsPage' : (context) => FlightsPage(database: database),
         '/addFlightsPage' : (context) => AddFlightsPage(database: database),
         '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
-        '/reservationsPage' : (context) => ReservationsPage(database: database),
-        '/addReservationsPage' : (context) => AddReservationsPage(database: database),
+        '/customersPage' : (context) => CustomerPage(database: database),
+        '/addCustomersPage' : (context) => CustomerAdd(database: database)
+
 
         // ^^^^^^you guys can add your routes to pages here
         // IMPORTANT: MAKE SURE TO PASS THE DATABASE AND PREFERENCES TO YOUR PAGES AS PARAMETER (IF YOU NEED THEM)
@@ -71,15 +72,15 @@ class _MyHomePageState extends State<MyHomePage> {
   // all the buttons are already hooked up to these functions
   //VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 
-  void navigateToCustomersListPage() {}
+  void navigateToCustomersListPage() {
+    Navigator.pushNamed(context, "/customersPage");
+  }
 
   void navigateToFlightsListPage() {
     Navigator.pushNamed(context, "/flightsPage");
   }
 
-  void navigateToReservations() {
-    Navigator.pushNamed(context, "/reservationsPage");
-  }
+  void navigateToReservations() {}
 
 
   @override
