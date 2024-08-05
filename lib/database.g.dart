@@ -78,6 +78,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
 
   FlightDao? _flightDaoInstance;
 
+  CustomerDao? _customerDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -103,6 +105,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
             'CREATE TABLE IF NOT EXISTS `airplanes` (`airplaneId` INTEGER, `airplaneType` TEXT NOT NULL, `numberOfPassengers` INTEGER NOT NULL, `maxSpeed` INTEGER NOT NULL, `range` INTEGER NOT NULL, PRIMARY KEY (`airplaneId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `flights` (`flightId` INTEGER NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`flightId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `customers` (`customerId` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `address` TEXT NOT NULL, `birthday` TEXT NOT NULL, PRIMARY KEY (`customerId`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -118,6 +122,11 @@ class _$ApplicationDatabase extends ApplicationDatabase {
   @override
   FlightDao get flightDao {
     return _flightDaoInstance ??= _$FlightDao(database, changeListener);
+  }
+
+  @override
+  CustomerDao get customerDao {
+    return _customerDaoInstance ??= _$CustomerDao(database, changeListener);
   }
 }
 
@@ -307,5 +316,99 @@ class _$FlightDao extends FlightDao {
   @override
   Future<int> deleteFlight(Flight flight) {
     return _flightDeletionAdapter.deleteAndReturnChangedRows(flight);
+  }
+}
+
+class _$CustomerDao extends CustomerDao {
+  _$CustomerDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _customerInsertionAdapter = InsertionAdapter(
+            database,
+            'customers',
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
+                },
+            changeListener),
+        _customerUpdateAdapter = UpdateAdapter(
+            database,
+            'customers',
+            ['customerId'],
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
+                },
+            changeListener),
+        _customerDeletionAdapter = DeletionAdapter(
+            database,
+            'customers',
+            ['customerId'],
+            (Customer item) => <String, Object?>{
+                  'customerId': item.customerId,
+                  'firstName': item.firstName,
+                  'lastName': item.lastName,
+                  'address': item.address,
+                  'birthday': item.birthday
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Customer> _customerInsertionAdapter;
+
+  final UpdateAdapter<Customer> _customerUpdateAdapter;
+
+  final DeletionAdapter<Customer> _customerDeletionAdapter;
+
+  @override
+  Future<List<Customer>> getAllCustomers() async {
+    return _queryAdapter.queryList('SELECT * FROM customers',
+        mapper: (Map<String, Object?> row) => Customer(
+            row['customerId'] as int,
+            row['firstName'] as String,
+            row['lastName'] as String,
+            row['address'] as String,
+            row['birthday'] as String));
+  }
+
+  @override
+  Stream<Customer?> getCustomerById(int id) {
+    return _queryAdapter.queryStream('SELECT * FROM customers WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Customer(
+            row['customerId'] as int,
+            row['firstName'] as String,
+            row['lastName'] as String,
+            row['address'] as String,
+            row['birthday'] as String),
+        arguments: [id],
+        queryableName: 'customers',
+        isView: false);
+  }
+
+  @override
+  Future<void> insertCustomer(Customer customer) async {
+    await _customerInsertionAdapter.insert(customer, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> updateCustomer(Customer customer) async {
+    await _customerUpdateAdapter.update(customer, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteCustomer(Customer customer) async {
+    await _customerDeletionAdapter.delete(customer);
   }
 }
