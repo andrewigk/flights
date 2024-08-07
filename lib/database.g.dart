@@ -80,6 +80,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
 
   CustomerDao? _customerDaoInstance;
 
+  ReservationDao? _reservationDaoInstance;
+
   Future<sqflite.Database> open(
     String path,
     List<Migration> migrations, [
@@ -107,6 +109,8 @@ class _$ApplicationDatabase extends ApplicationDatabase {
             'CREATE TABLE IF NOT EXISTS `flights` (`flightId` INTEGER NOT NULL, `destinationCity` TEXT NOT NULL, `departureCity` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`flightId`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `customers` (`customerId` INTEGER NOT NULL, `firstName` TEXT NOT NULL, `lastName` TEXT NOT NULL, `address` TEXT NOT NULL, `birthday` TEXT NOT NULL, PRIMARY KEY (`customerId`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `reservations` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `customerId` INTEGER NOT NULL, `flightId` INTEGER NOT NULL, `reservationDate` TEXT NOT NULL, `destination` TEXT NOT NULL, `departureTime` TEXT NOT NULL, `arrivalTime` TEXT NOT NULL, PRIMARY KEY (`id`))');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -127,6 +131,12 @@ class _$ApplicationDatabase extends ApplicationDatabase {
   @override
   CustomerDao get customerDao {
     return _customerDaoInstance ??= _$CustomerDao(database, changeListener);
+  }
+
+  @override
+  ReservationDao get reservationDao {
+    return _reservationDaoInstance ??=
+        _$ReservationDao(database, changeListener);
   }
 }
 
@@ -323,7 +333,7 @@ class _$CustomerDao extends CustomerDao {
   _$CustomerDao(
     this.database,
     this.changeListener,
-  )   : _queryAdapter = QueryAdapter(database, changeListener),
+  )   : _queryAdapter = QueryAdapter(database),
         _customerInsertionAdapter = InsertionAdapter(
             database,
             'customers',
@@ -333,8 +343,7 @@ class _$CustomerDao extends CustomerDao {
                   'lastName': item.lastName,
                   'address': item.address,
                   'birthday': item.birthday
-                },
-            changeListener),
+                }),
         _customerUpdateAdapter = UpdateAdapter(
             database,
             'customers',
@@ -345,8 +354,7 @@ class _$CustomerDao extends CustomerDao {
                   'lastName': item.lastName,
                   'address': item.address,
                   'birthday': item.birthday
-                },
-            changeListener),
+                }),
         _customerDeletionAdapter = DeletionAdapter(
             database,
             'customers',
@@ -357,8 +365,7 @@ class _$CustomerDao extends CustomerDao {
                   'lastName': item.lastName,
                   'address': item.address,
                   'birthday': item.birthday
-                },
-            changeListener);
+                });
 
   final sqflite.DatabaseExecutor database;
 
@@ -384,20 +391,6 @@ class _$CustomerDao extends CustomerDao {
   }
 
   @override
-  Stream<Customer?> getCustomerById(int id) {
-    return _queryAdapter.queryStream('SELECT * FROM customers WHERE id = ?1',
-        mapper: (Map<String, Object?> row) => Customer(
-            row['customerId'] as int,
-            row['firstName'] as String,
-            row['lastName'] as String,
-            row['address'] as String,
-            row['birthday'] as String),
-        arguments: [id],
-        queryableName: 'customers',
-        isView: false);
-  }
-
-  @override
   Future<void> insertCustomer(Customer customer) async {
     await _customerInsertionAdapter.insert(customer, OnConflictStrategy.abort);
   }
@@ -410,5 +403,93 @@ class _$CustomerDao extends CustomerDao {
   @override
   Future<void> deleteCustomer(Customer customer) async {
     await _customerDeletionAdapter.delete(customer);
+  }
+}
+
+class _$ReservationDao extends ReservationDao {
+  _$ReservationDao(
+    this.database,
+    this.changeListener,
+  )   : _queryAdapter = QueryAdapter(database, changeListener),
+        _reservationInsertionAdapter = InsertionAdapter(
+            database,
+            'reservations',
+            (Reservation item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'customerId': item.customerId,
+                  'flightId': item.flightId,
+                  'reservationDate': item.reservationDate,
+                  'destination': item.destination,
+                  'departureTime': item.departureTime,
+                  'arrivalTime': item.arrivalTime
+                },
+            changeListener),
+        _reservationDeletionAdapter = DeletionAdapter(
+            database,
+            'reservations',
+            ['id'],
+            (Reservation item) => <String, Object?>{
+                  'id': item.id,
+                  'name': item.name,
+                  'customerId': item.customerId,
+                  'flightId': item.flightId,
+                  'reservationDate': item.reservationDate,
+                  'destination': item.destination,
+                  'departureTime': item.departureTime,
+                  'arrivalTime': item.arrivalTime
+                },
+            changeListener);
+
+  final sqflite.DatabaseExecutor database;
+
+  final StreamController<String> changeListener;
+
+  final QueryAdapter _queryAdapter;
+
+  final InsertionAdapter<Reservation> _reservationInsertionAdapter;
+
+  final DeletionAdapter<Reservation> _reservationDeletionAdapter;
+
+  @override
+  Future<List<Reservation>> getAllReservations() async {
+    return _queryAdapter.queryList('SELECT * FROM reservations',
+        mapper: (Map<String, Object?> row) => Reservation(
+            id: row['id'] as int,
+            name: row['name'] as String,
+            customerId: row['customerId'] as int,
+            flightId: row['flightId'] as int,
+            reservationDate: row['reservationDate'] as String,
+            destination: row['destination'] as String,
+            departureTime: row['departureTime'] as String,
+            arrivalTime: row['arrivalTime'] as String));
+  }
+
+  @override
+  Stream<Reservation?> getReservationById(int id) {
+    return _queryAdapter.queryStream('SELECT * FROM reservations WHERE id = ?1',
+        mapper: (Map<String, Object?> row) => Reservation(
+            id: row['id'] as int,
+            name: row['name'] as String,
+            customerId: row['customerId'] as int,
+            flightId: row['flightId'] as int,
+            reservationDate: row['reservationDate'] as String,
+            destination: row['destination'] as String,
+            departureTime: row['departureTime'] as String,
+            arrivalTime: row['arrivalTime'] as String),
+        arguments: [id],
+        queryableName: 'reservations',
+        isView: false);
+  }
+
+  @override
+  Future<void> insertReservation(Reservation reservation) async {
+    await _reservationInsertionAdapter.insert(
+        reservation, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteReservation(Reservation reservation) async {
+    await _reservationDeletionAdapter.delete(reservation);
   }
 }

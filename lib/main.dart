@@ -8,6 +8,10 @@ import 'customers/customer_add.dart';
 import 'customers/customer_page.dart';
 import 'database.dart';
 import 'flights_list/flights_page.dart';
+import 'reservation/reservation_add.dart';
+import 'reservation/reservation_page.dart';
+
+
 
 void main() async { // DO NOT MODIFY THIS CODE!!!!!!!!!!!!
   // WE ARE ALL USING THE SAME SHARED DATABASE
@@ -38,7 +42,9 @@ class MyApp extends StatelessWidget {
         '/addFlightsPage' : (context) => AddFlightsPage(database: database),
         '/airplaneDetailsPage': (context) => AirplaneDetailsPage(database: database),
         '/customersPage' : (context) => CustomerPage(database: database),
-        '/addCustomersPage' : (context) => CustomerAdd(database: database)
+        '/addCustomersPage' : (context) => CustomerAdd(database: database),
+        '/reservationsPage': (context) => ReservationPage(database: database),
+        '/addReservationPage': (context) => ReservationAddPage(database: database),
 
 
         // ^^^^^^you guys can add your routes to pages here
@@ -80,8 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.pushNamed(context, "/flightsPage");
   }
 
-  void navigateToReservations() {}
-
+  void navigateToReservations() {
+    Navigator.pushNamed(context, "/reservationsPage");
+  }
 
   @override
   Widget build(BuildContext context) {
