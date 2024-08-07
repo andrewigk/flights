@@ -8,11 +8,14 @@ import 'customers/customer.dart';
 import 'customers/customer_dao.dart';
 import 'flights_list/flights.dart';
 import 'flights_list/flights_dao.dart';
+import 'reservation/reservation.dart';
+import 'reservation/reservation_dao.dart';
+
 
 
 part 'database.g.dart';
 
-@Database(version: 1, entities: [Airplane, Flight, Customer])
+@Database(version: 1, entities: [Airplane, Flight, Customer, Reservation])
 abstract class ApplicationDatabase extends FloorDatabase {
 
   // all of our entities will be a table in the same app database (this one)
@@ -20,4 +23,6 @@ abstract class ApplicationDatabase extends FloorDatabase {
   AirplaneDao get airplaneDao;
   FlightDao get flightDao;
   CustomerDao get customerDao;
+  ReservationDao get reservationDao;
+
 }
