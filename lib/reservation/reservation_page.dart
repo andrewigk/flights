@@ -187,7 +187,7 @@ class _ReservationPageState extends State<ReservationPage> {
             ElevatedButton(
                 child: Text(isEnglish ? "Update Reservation" : "Reservierung aktualisieren"),
                 // Clicking update or delete navigates to ReservationAdd page with
-                // selected reservation and database objects.
+                // selected reservati on and database objects.
                 onPressed: () {
                   Navigator.push(
                     context,
